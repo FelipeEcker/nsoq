@@ -1,0 +1,61 @@
+#/*......,,,,,,,...................................................
+#*
+#* @@NAME:     RPM BUILD
+#* @@VERSION:  1.0
+#* @@DESC:     RPM build file (this file is part of MpTcp tool).
+#* @@AUTHOR:   Felipe Ecker (Khun) <khun@hexcodes.org>
+#* @@DATE:     22/12/2012 (00:30:00)
+#* @@MANIFEST:
+#*      Copyright (C) Felipe Ecker 2003-2013.
+#*      You should have received a copy of the GNU General Public
+#*      License inside this program. Licensed under GPL 3.
+#*      If not, write to me an e-mail please. Thank you.
+#*
+#*.................................................................
+#*
+
+%define _rpmdir @@DESTDIR@@
+%define appname @@APPNAME@@
+%define major @@MAJOR@@
+%define minor @@MINOR@@
+%define patch @@PATCH@@
+%define specrel @@RELEASE@@
+%define bindir @@BINDIR@@
+%define docdir @@DOCDIR@@
+%define mandir @@MANDIR@@
+
+Name: %{appname}
+Version: %{major}.%{minor}.%{patch}
+Release: %{specrel}
+Summary: Felipe Ecker (Khun) %{name}
+Source: %{appname}-%{version}.tar.gz
+License: GPL Version 3
+Group: Applications
+BuildRoot: /var/tmp/rpm-%{name}-%{version}
+URL: http://www.hexcodes.org
+Packager: Felipe Ecker (Khun) <khun@hexcodes.org>
+Prefix: /
+
+%description
+Felipe Ecker - %{name} (Mpctp is a tool for raw packets manipulation, connections manipulations and RSOI handler)
+
+%install
+install -d $RPM_SOURCE_DIR/%{_rpmdir}
+install -d $RPM_BUILD_ROOT%{bindir}
+install -d $RPM_BUILD_ROOT%{docdir}
+install -d $RPM_BUILD_ROOT%{mandir}
+
+tar zfx $RPM_SOURCE_DIR/%{appname}-%{version}.tar.gz -C $RPM_BUILD_ROOT
+
+%clean
+
+%files
+%defattr (-,root,root)
+%attr (0755,root,root) %{bindir}/%{appname}
+%attr (0644,root,root) %{docdir}/mptcp.txt
+%attr (0644,root,root) %{docdir}/COPYING
+%attr (0755,root,root) %{mandir}/mptcp.8.gz
+
+%changelog
+* Fri Dec 21 2012 Felipe Ecker (Khun) <khun@hexcodes.org>
+- Created RPM package.

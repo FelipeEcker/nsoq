@@ -1,0 +1,10 @@
+Package: Mptcp
+Version: 1.9.0
+Architecture: all
+Maintainer: Felipe Ecker (Khun) <khun@hexcodes.org>
+Installed-Size: 62000
+Depends:
+Section: Networking
+Priority: Standard
+Homepage: http://www.hexcodes.org/
+Description: Mpctp is a tool for raw packets manipulation, connections manipulations and RSOI handler.
