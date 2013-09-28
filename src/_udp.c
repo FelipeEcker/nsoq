@@ -215,18 +215,19 @@ inline static void *__send() {
 #endif
 
    auto signed int sock;
-   struct sockaddr_in source;
+   //struct sockaddr_in source;
 
    pthread_mutex_lock(&__mutex);
    /* RAW socket */
    if ( !( sock = __socketPool(true, 0, false)) ) return NULL;
    pthread_mutex_unlock(&__mutex);
+
    __set_hdrincl(sock);
 
    uchar cbuffer[pkt->buffsize + 40] __nocommon__;
    memset(cbuffer, 0, sizeof(cbuffer));
-   __lookup(&source, pkt->src, pkt->srcport, true);
-   __packing(cbuffer, (uint16) sizeof(cbuffer), &source, _data.target);
+
+   __packing(cbuffer, (uint16) sizeof(cbuffer), _data.source, _data.target);
 
    bool isConted = false;
    auto uint32 count = pkt->counter;
@@ -259,6 +260,7 @@ inline static void *__send() {
          usleep(50000);
       }
       if (!(--count)) break;
+      __packing(cbuffer, (uint16) sizeof(cbuffer), _data.source, _data.target);
    } while (pkt->continuous || pkt->flood || isConted);
    return NULL;
 }
@@ -271,7 +273,6 @@ inline static void *__burst() {
 #endif
 
    register signed int sock;
-   struct sockaddr_in source;
 
    pthread_mutex_lock(&__mutex);
    /* RAW socket*/
@@ -281,8 +282,8 @@ inline static void *__burst() {
 
    uchar cbuffer[pkt->buffsize + 40] __nocommon__;
    memset(cbuffer, 0, sizeof(cbuffer));
-   __lookup(&source, pkt->src, pkt->srcport, true);
-   __packing(cbuffer, (uint16) sizeof(cbuffer), &source, _data.target);
+   
+   __packing(cbuffer, (uint16) sizeof(cbuffer), _data.source, _data.target);
 
    auto char address[INET_ADDRSTRLEN] __nocommon__;
    inet_ntop(AF_INET, &(_data.target->sin_addr), address, INET_ADDRSTRLEN);
@@ -301,6 +302,7 @@ inline static void *__burst() {
    targ, tsize) < 0))
       goto __EXIT;
 
+   __packing(cbuffer, (uint16) sizeof(cbuffer), _data.source, _data.target);
    if (--counter) goto __SEND;
    goto __RETURN;
 
@@ -318,7 +320,6 @@ bool udp( const char **pull __unused__ ) {
    signal(SIGINT, __sigcatch);
    signal(SIGALRM, __sigcatch);
 
-   static char addressbuff[sizeof(struct sockaddr_in)*2] __nocommon__;
    _data.source = (struct sockaddr_in *) addressbuff;
    _data.target = (struct sockaddr_in *) addressbuff + sizeof(struct sockaddr_in);
 

@@ -616,8 +616,6 @@ bool arp( const char **pull __unused__ ) {
    signal(SIGINT, __sigcatch);
    signal(SIGALRM, __sigcatch);
 
-   static char addressbuff[sizeof(struct sockaddr_in) * 2] __nocommon__;
-
    _data.source = (struct sockaddr_in *) addressbuff;
    _data.target = (struct sockaddr_in *) addressbuff + sizeof(struct sockaddr_in);
 

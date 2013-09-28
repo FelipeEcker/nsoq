@@ -68,7 +68,6 @@ static void __doListenConnections( void ) {
    auto struct timeval _times;
    auto fd_set arrived;
 
-   if (!__lookup(_data.source, pkt->src, pkt->srcport, true)) return;
    log("Listening for TCP connections on local port (%d):\n", pkt->srcport);
 
    __AGAIN:
@@ -289,7 +288,7 @@ inline static struct tcphdr *__packing( uchar *__buffer,
    __ip->frag_off= 0x00;
    __ip->ihl     = 0x05;
    __ip->ttl     = pkt->ttl;
-   __ip->id      = htons(0xFFDD);
+   __ip->id      = htons(rand() % 0xFFFF);
    __ip->protocol= IPPROTO_TCP;
    __ip->tot_len = htons(__size); /* HeaderIP and headerTCP: 40 bytes */
    __ip->check   = __checksum((uint16 *) __ip, SIZE_IP);
@@ -330,7 +329,7 @@ inline static struct tcphdr *__packing( uchar *__buffer,
    __ip->ip_off   = 0x00;
    __ip->ip_hl    = 0x05;
    __ip->ip_ttl   = pkt->ttl;
-   __ip->ip_id    = htons(0xFFDD);
+   __ip->ip_id    = htons(rand() % 0xFFFF);
    __ip->ip_p     = IPPROTO_TCP;
    __ip->ip_len   = __size; /* HeaderIP and headerTCP --> 40 bytes */
    __ip->ip_sum   = __checksum((uint16 *) __ip, SIZE_IP);
@@ -515,7 +514,6 @@ inline static void *__send() {
 #endif
 
    auto uint32 nsock, sock;
-   struct sockaddr_in source;
 
    pthread_mutex_lock(&__mutex);
    /* RAW socket*/
@@ -528,10 +526,9 @@ inline static void *__send() {
 
    uchar cbuffer[pkt->buffsize + 52] __nocommon__;
    memset(cbuffer, 0, sizeof(cbuffer));
-   __lookup(&source, pkt->src, pkt->srcport, true);
 
    struct tcphdr *__tcp = __packing(cbuffer, (uint16) sizeof(cbuffer),
-                          &source, _data.target);
+                          _data.source, _data.target);
 
    bool isConted = false;
    register uint32 count = pkt->counter;
@@ -585,6 +582,7 @@ inline static void *__send() {
          usleep(50000);
       }
       if (!(--count)) break;
+      __packing(cbuffer, (uint16) sizeof(cbuffer), _data.source, _data.target);
    } while (pkt->continuous || pkt->flood || isConted);
 
    return NULL;
@@ -598,7 +596,6 @@ inline static void *__burst() {
 #endif
 
    register uint32 sock;
-   struct sockaddr_in source;
 
    pthread_mutex_lock(&__mutex);
    /* RAW socket*/
@@ -608,10 +605,9 @@ inline static void *__burst() {
 
    uchar cbuffer[pkt->buffsize + 52] __nocommon__;
    memset(cbuffer, 0, sizeof(cbuffer));
-   __lookup(&source, pkt->src, pkt->srcport, true);
 
    struct tcphdr *__tcp = __packing(cbuffer, (uint16) sizeof(cbuffer), 
-                          &source, _data.target);
+                          _data.source, _data.target);
 
    auto char address[INET_ADDRSTRLEN] __nocommon__;
    inet_ntop(AF_INET, &(_data.target->sin_addr), address, INET_ADDRSTRLEN);
@@ -631,6 +627,7 @@ inline static void *__burst() {
    if ( hardfalse(sendto(sock, buffer, size, 0, (struct sockaddr *)
    targ, tsize) < 0)) goto __EXIT;
 
+   __packing(cbuffer, (uint16) sizeof(cbuffer), _data.source, _data.target);
    if (--counter) goto __SEND;
    goto __RETURN;
 
@@ -648,7 +645,6 @@ bool tcp(const char **pull __unused__ ) {
    signal(SIGINT, __sigcatch);
    signal(SIGALRM, __sigcatch);
 
-   static char addressbuff[sizeof(struct sockaddr_in)*2] __nocommon__;
    _data.source = (struct sockaddr_in *) addressbuff;
    _data.target = (struct sockaddr_in *) addressbuff + sizeof(struct sockaddr_in);
 

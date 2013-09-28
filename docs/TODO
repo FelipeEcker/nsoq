@@ -6,8 +6,3 @@ ____________
 - Stable port to OpenBSD system.
 - Stable port to NetBSD system.
 
-- Scale root permission
-- Proxy support
-- Add web stress slowloris
-
-

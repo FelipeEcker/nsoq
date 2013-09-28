@@ -1,6 +1,18 @@
                          CHANGELOG           
 
 
+Version 1.9.2:
+(07.16.2012)
+..............
+
+- Support for MAC OSX (Console package for version > 10.6)
+- Adjust to more realtime packet identification on senders
+- UDP checksum correctly seted
+- Support for FIN packet received on IRC transaction
+- [BUG] Overflow when an IRC server closing connection before the second connection (FIXED)
+- [BUG] IRC mode on Freebsd do NOT handle servers with slow connection (FIXED)
+
+
 
 Version 1.9.0:
 (12.25.2012)

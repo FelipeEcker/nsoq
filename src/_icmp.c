@@ -435,7 +435,6 @@ bool icmp( const char **pull __unused__ ) {
       goto __LEAVINGNOW;
    }
 
-   static char addressbuff[sizeof(struct sockaddr_in) * 2] __nocommon__;
    _data.source = (struct sockaddr_in *) addressbuff;
    _data.target = (struct sockaddr_in *) (addressbuff + sizeof(struct sockaddr_in));
 

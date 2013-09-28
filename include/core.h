@@ -222,6 +222,7 @@ pthread_t __threads[TLIMIT];
 pthread_mutex_t __mutex;
 signed int __sockets[SLIMIT];
 uint32 __pool;
+char addressbuff[sizeof(struct sockaddr_in)*2];
 
 #if defined(__BSD_SYSTEM__)
 pcap_t *__session;

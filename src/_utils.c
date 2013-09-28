@@ -235,6 +235,7 @@ inline bool __lookup( struct sockaddr_in *_sockaddr,
    char __ip[INET_ADDRSTRLEN];
    const char **eth = interfaces;
    bool myip = false;
+   memset(_sockaddr, 0, sizeof(struct sockaddr_in));
 
    if (isSource) {
       if ( !(*address) ) {

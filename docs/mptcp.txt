@@ -910,7 +910,7 @@ ______________
    the tool. MpTcp is licensed under GPL and Free Software Foundation. A copy
    of the license accompanies the software. 
    Licensed under GPL 3 - Copyright (C) Felipe Ecker.
-   MpTcp can be freely downloaded here: http://www.hexcodes.org/tools/mptcp
+   MpTcp can be freely downloaded here: www.hexcodes.org/tools/mptcp/downloads/
 
                                   Thank you.
 
