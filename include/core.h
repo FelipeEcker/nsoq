@@ -185,7 +185,7 @@ defined(__DARWIN_ONLY_UNIX_CONFORMANCE)
 #define pass            __asm__ volatile("nop")
 #define __LOOPBACK      "127.0.0.1"
 
-#define compare(x,y) !strcmp(x,y) ? true : false
+#define compare(x,y) (!strcmp(x,y) ? true : false)
 
 #if defined( __i386__ )
    volatile unsigned long __start, __end;
