@@ -80,6 +80,7 @@ const char *__doConsistency( void ) {
    if (pkt->webType & WEB_HTTP) __doCheck <<= 0x1;
    if (pkt->webType & WEB_SYN) __doCheck <<= 0x1;
    if (pkt->webType & WEB_ACK) __doCheck <<= 0x1;
+   if (pkt->webType & WEB_SLOW) __doCheck <<= 0x1;
    if (__doCheck > 0x02) return "Invalid options: Use each WEBSTRESS mode option separatelly.";
 
    if ( (pkt->tcpType & TCP_CON) && (pkt->flood || pkt->superFlood) )

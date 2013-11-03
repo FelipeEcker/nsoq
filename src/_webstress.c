@@ -462,6 +462,17 @@ inline static void __ack_stress() {
 }
 
 
+#if !defined(WEAK_GCC) 
+__hot__ inline static void __slow_stress() {
+#else
+inline static void __slow_stress() {
+#endif
+
+   show("__NOT_IMPLEMENTED__\n");
+   show("TODO: Threads ?? \n\n");
+}
+
+
 bool web( const char **pull __unused__ ) {
 
    signal(SIGINT, __sigcatch);
@@ -480,6 +491,7 @@ bool web( const char **pull __unused__ ) {
    else if (pkt->webType & WEB_ICMP) func = &__icmp_stress;
    else if (pkt->webType & WEB_SYN) func = &__syn_stress;
    else if (pkt->webType & WEB_ACK) func = &__ack_stress;
+   else if (pkt->webType & WEB_SLOW) func = &__slow_stress;
    else func = NULL;
 
    if ( !__threadPool(pkt->numThreads, func, NULL) ) return false;

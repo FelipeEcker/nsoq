@@ -141,11 +141,13 @@ defined(__DARWIN_ONLY_UNIX_CONFORMANCE)
 #define WEB_ICMP        0x00200000
 #define WEB_SYN         0x00400000
 #define WEB_ACK         0x00800000
+#define WEB_SLOW        0x20000000
 #define LISTEN_ICMP     0x01000000
 #define LISTEN_TCP      0x02000000
 #define LISTEN_TCP_CON  0x04000000
 #define LISTEN_UDP      0x08000000
 #define LISTEN_ARP      0x10000000
+
 
 #if defined(bool)
    #undef bool
