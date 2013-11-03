@@ -1,5 +1,8 @@
-MPTCP DESCRIPTION:
-__________________
+MPTCP Documentation: See [here.](http://www.hexcodes.org/mptcp.i)
+===========================================================
+
+
+## About:
 
    Mpctp is a tool for raw packets manipulation that allows a large number of
    options. Its primary purpose is diagnose and test several scenarios that
@@ -14,3 +17,5 @@ __________________
    machine resources to one channel on an remote IRC server.
    Also, too many types of network based attacks (like packet attacks) also
    are handled by MpTcp.
+
+
