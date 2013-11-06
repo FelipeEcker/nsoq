@@ -470,6 +470,49 @@ inline static void __slow_stress() {
 
    show("__NOT_IMPLEMENTED__\n");
    show("TODO: Threads ?? \n\n");
+
+   return;
+
+   register uint32 sock;
+
+   pthread_mutex_lock(&__mutex);
+   /* RAW socket*/
+   if ( !( sock = __socketPool(false, __TCP_MODE__, true)) ) return;
+   pthread_mutex_unlock(&__mutex);
+
+   __set_nonblock(sock);
+
+   register uint8 tsize = sizeof(struct sockaddr);
+   register struct sockaddr_in *targ = _data.target;
+
+   show("Connecting to host on port %d...\n", pkt->port);
+   connect(sock, (struct sockaddr *) targ, tsize);
+
+   auto struct timeval _times;
+   auto fd_set beep, wr;
+   _times.tv_sec = 5;
+   _times.tv_usec = 0;
+   FD_ZERO(&beep);
+   FD_ZERO(&wr);
+   FD_SET(sock, &beep);
+   FD_SET(sock, &wr);
+
+   if ( select(sock+1, &beep, &wr, NULL, &_times) != 1) {
+      log("Unable to connect on host. Closed port ??\n");
+      kill(getpid(), SIGALRM);
+      return;
+   }
+
+   close(sock);
+   uchar cbuffer[pkt->buffsize + 40];
+   memset(cbuffer, 0x58, sizeof(cbuffer));
+   signal(SIGPIPE, SIG_IGN);
+
+   register uchar *data = cbuffer;
+   register uint32 size = sizeof(cbuffer);
+
+   show("[Connected]\n");
+
 }
 
 
