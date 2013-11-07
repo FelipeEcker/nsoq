@@ -513,6 +513,8 @@ inline static void __slow_stress() {
 
    show("[Connected]\n");
 
+   return;
+
 }
 
 
