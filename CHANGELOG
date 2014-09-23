@@ -1,6 +1,15 @@
                          CHANGELOG           
 
 
+Version 1.9.3:
+(09.23.2014)
+..............
+
+- [BUG] Variable size in structures for Darwin OS
+- [BUG] No warnings for cast int-to-bool on compilation
+
+
+
 Version 1.9.2:
 (07.16.2012)
 ..............

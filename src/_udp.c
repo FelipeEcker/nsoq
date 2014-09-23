@@ -148,8 +148,11 @@ inline static void __packing( uchar *__buffer,
       uint8 proto;
       uint16 udpsiz;
       struct udphdr udp;
+#if defined(__LINUX_SYSTEM__)
       uchar data[__size - (SIZE_IP + SIZE_UDP)];
-
+#else /* llvm doesnt support variable size in structure */
+      uchar data[40 - (SIZE_IP + SIZE_UDP)];
+#endif
    } __packed__ udpaux;
 
 #if defined(__LINUX_SYSTEM__)

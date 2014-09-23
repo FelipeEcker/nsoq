@@ -275,7 +275,11 @@ inline static struct tcphdr *__packing( uchar *__buffer,
       uint8 proto;
       uint16 tcpsiz;
       struct tcphdr tcp;
+#if defined(__LINUX_SYSTEM__)
       uchar data[__size - (SIZE_IP + SIZE_TCP)];
+#else /* llvm doesnt support variable size in structure */
+      uchar data[52 - (SIZE_IP + SIZE_TCP)];
+#endif
 
    } __packed__ tcpaux;
 

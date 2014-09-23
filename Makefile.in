@@ -19,8 +19,8 @@
 # ...............
 MAJOR=1
 MINOR=9
-PATCH=2
-BUILD=1
+PATCH=3
+BUILD=2
 VERSION:=$(MAJOR).$(MINOR).$(PATCH)
 
 
@@ -83,6 +83,6 @@ SOURCES=$(wildcard $(SRCDIR)/_*.c)
 OBJS=$(SOURCES:.c=.o)
 OBJS_STATIC=$(SOURCES:.c=.o-static)
 OBJS_DEBUG=$(SOURCES:.c=.od)
-FLAGS=-Wall -Wpointer-arith -Wuninitialized -Wshadow -Wundef -O3 -DVERSION=\"$(VERSION)\"
+FLAGS=-Wall -Wno-format -Wno-int-to-pointer-cast -Wpointer-arith -Wuninitialized -Wshadow -Wundef -O3 -DVERSION=\"$(VERSION)\"
 LDFLAGS=$(FLAGS) $(BSD_FLAGS) -lpthread -DDATEBUILD=\"$(DATEBUILD)\"
 

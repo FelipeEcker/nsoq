@@ -34,7 +34,11 @@ inline static void __packing( const uint32 __type,
       uint8 proto;
       uint16 tcpsiz;
       struct tcphdr tcp;
+#if defined(__LINUX_SYSTEM__)
       uchar data[size - (SIZE_IP + SIZE_TCP)];
+#else
+      uchar data[52 - (SIZE_IP + SIZE_TCP)];
+#endif
    } __packed__ tcpaux;   
 
    struct __auxhdr2 {
@@ -44,8 +48,11 @@ inline static void __packing( const uint32 __type,
       uint8 proto;
       uint16 udpsiz;
       struct udphdr udp;
+#if defined(__LINUX_SYSTEM__)
       uchar data[size - (SIZE_IP + SIZE_UDP)];
-
+#else
+      uchar data[40 - (SIZE_IP + SIZE_UDP)];
+#endif
    } __packed__ udpaux;
 
 #if !defined(__BSD_SYSTEM__)
@@ -508,13 +515,9 @@ inline static void __slow_stress() {
    memset(cbuffer, 0x58, sizeof(cbuffer));
    signal(SIGPIPE, SIG_IGN);
 
-   register uchar *data = cbuffer;
-   register uint32 size = sizeof(cbuffer);
-
    show("[Connected]\n");
 
    return;
-
 }
 
 
