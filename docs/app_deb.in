@@ -1,0 +1,10 @@
+Package: Nsoq
+Version: 1.9.4
+Architecture: all
+Maintainer: Felipe Ecker (Khun) <khun@hexcodes.org>
+Installed-Size: 62k
+Depends:
+Section: Networking
+Priority: Standard
+Homepage: http://www.hexcodes.org/nsoq.i
+Description: Nsoq is a light Network Security tool for raw packets, connections and RSOI handler.

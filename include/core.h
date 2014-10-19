@@ -1,12 +1,12 @@
 /*......,,,,,,,.............................................................
 *
 * @@NAME:     CORE.H
-* @@VERSION:  1.0.9
-* @@DESC:     Include file (this file is part of MpTcp tool).
+* @@VERSION:  1.9.4
+* @@DESC:     Include file (this file is part of Nsoq tool).
 * @@AUTHOR:   Felipe Ecker (Khun) <khun@hexcodes.org>
-* @@DATE:     21/09/2012 (02:15:00)
+* @@DATE:     18/10/2014 (16:30:00)
 * @@MANIFEST:
-*      Copyright (C) Felipe Ecker 2003-2013.
+*      Copyright (C) Felipe Ecker 2003-2014.
 *      You should have received a copy of the GNU General Public License 
 *      inside this program. Licensed under GPL 3
 *      If not, write to me an e-mail please. Thank you.
@@ -53,7 +53,7 @@ defined(__DARWIN_ONLY_UNIX_CONFORMANCE)
    #define __BSD_SYSTEM__
    #if defined(__NetBSD__) || defined(__OpenBSD__)
       #warning System not supported. Avaiable systems are: \
-      Linux(all), FreeBSD and Darwin MACOS(IOS*). Exiting..
+      Linux(all), FreeBSD, MAC OSX and MAC IOS* Systems. Exiting..
    #endif
 
 #elif defined(linux) || defined(__linux) || defined(__linux__)
@@ -67,7 +67,7 @@ defined(__DARWIN_ONLY_UNIX_CONFORMANCE)
 
 #else
    #error System not supported. Avaiable systems are: \
-   Linux(all), FreeBSD and Darwin MACOS(IOS*). Exiting..
+   Linux(all), FreeBSD, MAC OSX and MAC IOS* Systems. Exiting..
 #endif
 
 #if defined(__GNUC__)
@@ -141,11 +141,13 @@ defined(__DARWIN_ONLY_UNIX_CONFORMANCE)
 #define WEB_ICMP        0x00200000
 #define WEB_SYN         0x00400000
 #define WEB_ACK         0x00800000
+#define WEB_SLOW        0x20000000
 #define LISTEN_ICMP     0x01000000
 #define LISTEN_TCP      0x02000000
 #define LISTEN_TCP_CON  0x04000000
 #define LISTEN_UDP      0x08000000
 #define LISTEN_ARP      0x10000000
+
 
 #if defined(bool)
    #undef bool
@@ -161,20 +163,17 @@ defined(__DARWIN_ONLY_UNIX_CONFORMANCE)
 
 #define __constructor__ __attribute__((constructor))
 #define __destructor__  __attribute__((destructor))
-#define __used__        __attribute__((used))
 #define __unused__      __attribute__((unused))
 #define __nocommon__    __attribute__((nocommon))
 #define __obsolet__     __attribute__((deprecated))
 #define __noreturn__    __attribute__((noreturn))
 #define __packed__      __attribute__((packed))
-#define __pure__        __attribute__((pure))
 #define __malloc__      __attribute__((malloc))
 
 #if !defined(WEAK_GCC)
-   #define __hot__      __attribute__((hot))
-   #define __call__     __attribute__((const,hot,used))
+   #define __call__     __attribute__((hot))
 #else
-   #define __call__     __attribute__((const,used))
+   #define __call__		__attribute__((used))
 #endif
 
 #undef show 
@@ -185,13 +184,7 @@ defined(__DARWIN_ONLY_UNIX_CONFORMANCE)
 #define pass            __asm__ volatile("nop")
 #define __LOOPBACK      "127.0.0.1"
 
-#define compare(x,y) !strcmp(x,y) ? true : false
-
-#if defined( __i386__ )
-   volatile unsigned long __start, __end;
-   #define __clock( x )  __asm__ volatile("rdtsc":"=A" ( x ))
-   #define __result( a, b ) printf("Clock time process: %lu\n\n", b-a)
-#endif
+#define compare(x,y) (!strcmp(x,y) ? true : false)
 
 #if defined(DEBUG)
 #define traceback(msg)   log("%s (Breakpoint on %s: Line %d)\n", msg, __FILE__, __LINE__)
@@ -285,6 +278,7 @@ void            __set_broadcast(const uint32);
 void            __set_nodelay(const uint32);
 void            __set_hdrincl(const uint32);
 void            __set_nonblock(const uint32);
+void            __set_keepalive(const uint32);
 bool            __lookup(struct sockaddr_in *,char *,const uint16,const bool);
 void            __sysdate(void);
 unsigned        __getch(void);
@@ -295,7 +289,6 @@ const char     *__fetchMac(const char *);
 bool            __checkBPF(const char *);
 void            __show_packet(const uchar *, const uint16);
 const char     *__getmonth(const char *);
-
 
 #endif /* CORE_H */
 

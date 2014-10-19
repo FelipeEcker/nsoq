@@ -1,12 +1,12 @@
 /*......,,,,,,,.............................................................
 *
 * @@NAME:     Module Package UTILS
-* @@VERSION:  1.0.0
-* @@DESC:     UTILS source file (this file is part of MpTcp tool).
+* @@VERSION:  1.0.1
+* @@DESC:     UTILS source file (this file is part of Nsoq tool).
 * @@AUTHOR:   Felipe Ecker (Khun) <khun@hexcodes.org>
-* @@DATE:     10/11/2012 04:30:01
+* @@DATE:     18/10/2012 16:30:00
 * @@MANIFEST:
-*      Copyright (C) Felipe Ecker 2003-2013.
+*      Copyright (C) Felipe Ecker 2003-2014.
 *      You should have received a copy of the GNU General Public License 
 *      inside this program. Licensed under GPL 3
 *      If not, write to me an e-mail please. Thank you.
@@ -135,7 +135,7 @@ inline signed int __socketPool( const bool raw,
 
    __MISS:
    if (__sockets[__pool] < 0) {
-      log("Error on socket create. \nNo more avaiable sockets. Restart the MpTcp.\n\n");
+      log("Error on socket create. \nNo more avaiable sockets. Restart the Nsoq application.\n\n");
       kill(getpid(), SIGALRM); /* Self destruction */
       return 0;
    }
@@ -189,7 +189,7 @@ inline bool __threadPool(   const uint16 numThreads,
 
 
 /* Set broadcast socket handle */
-__pure__ void __set_broadcast( const uint32 __socket ) {
+void __set_broadcast( const uint32 __socket ) {
 
    unsigned set = 0x01;
    setsockopt(__socket, SOL_SOCKET, SO_BROADCAST, &set, sizeof(unsigned));
@@ -197,7 +197,7 @@ __pure__ void __set_broadcast( const uint32 __socket ) {
 
 
 /* Set TCP NODELAY socket handle*/
-__pure__ inline void __set_nodelay( const uint32 __socket ) {
+inline void __set_nodelay( const uint32 __socket ) {
 
    unsigned set = 0x01;
    setsockopt(__socket, IPPROTO_TCP, TCP_NODELAY, &set, sizeof(unsigned));
@@ -205,18 +205,23 @@ __pure__ inline void __set_nodelay( const uint32 __socket ) {
 
 
 /* Set raw constructor sender socket handle */
-__pure__ void __set_hdrincl( const uint32 __socket ) {
+void __set_hdrincl( const uint32 __socket ) {
 
    unsigned set = 0x01;
    setsockopt(__socket, IPPROTO_IP, IP_HDRINCL, &set, sizeof(unsigned));
 }
 
-/* Set socket to NON BLOCKING strem */
-__pure__ inline void __set_nonblock( const uint32 __socket ) {
+/* Set socket to NON BLOCKING stream */
+inline void __set_nonblock( const uint32 __socket ) {
 
    fcntl(__socket, F_SETFL, O_NONBLOCK);
 }
 
+/* Set socket to KEEPALIVE stream */
+inline void __set_keepalive( const uint32 __socket ) {
+   unsigned set = 0x01;
+   setsockopt(__socket, SOL_SOCKET, SO_KEEPALIVE, &set, sizeof(unsigned));
+}
 
 /* Target/Source/Port/Interface lookup handler */
 inline bool __lookup( struct sockaddr_in *_sockaddr, 
@@ -275,7 +280,7 @@ inline bool __lookup( struct sockaddr_in *_sockaddr,
       }
    }
 
-   auto struct hostent *host;
+   struct hostent *host;
    if (!(host = (struct hostent *) gethostbyname(address))) {
       log("Error on lookup hostname: \"%s\" is an invalid host.\n\n", address);
       return false;
@@ -302,7 +307,7 @@ inline void __sysdate( void ) {
 
 /* Generate a random IP address */
 #if !defined(WEAK_GCC)
-__hot__ inline const char *__randomIp ( void ) {
+__call__ inline const char *__randomIp ( void ) {
 #else
 inline const char *__randomIp ( void ) {
 #endif
@@ -320,7 +325,7 @@ inline const char *__randomIp ( void ) {
 
 /* Generate a ramdom MAC address */
 #if !defined(WEAK_GCC)
-__hot__ inline const char *__randomMac ( void ) {
+__call__ inline const char *__randomMac ( void ) {
 #else
 inline const char *__randomMac ( void ) {
 #endif
@@ -339,7 +344,7 @@ int __fetchIp( const char *__device , char *__ip) {
 
    register uint32 sock;
    signed int __ctrl;
-   auto struct ifreq eth;
+   struct ifreq eth;
 
    sock = socket(AF_INET, SOCK_DGRAM, 0);
    eth.ifr_addr.sa_family = AF_INET;
@@ -347,7 +352,7 @@ int __fetchIp( const char *__device , char *__ip) {
    __ctrl = !ioctl(sock, SIOCGIFADDR, &eth);
 
    if (__ctrl) {
-      auto struct sockaddr_in *address = (struct sockaddr_in *) &eth.ifr_addr;
+      struct sockaddr_in *address = (struct sockaddr_in *) &eth.ifr_addr;
       inet_ntop(AF_INET, &(address->sin_addr), __ip, INET_ADDRSTRLEN);
    }
    
@@ -360,7 +365,7 @@ __malloc__ inline const char *__fetchMac( const char *__device ) {
 
 #if defined(__LINUX_SYSTEM__)
    register uint32 sock, i = 0, j = 0;
-   auto struct ifreq eth;
+   struct ifreq eth;
    static char mac[ETH_LEN];
 
    sock = socket(AF_INET, SOCK_DGRAM, 0);
@@ -375,9 +380,9 @@ __malloc__ inline const char *__fetchMac( const char *__device ) {
    return mac;
 
 #else
-   auto struct ifaddrs *ifaddrs_ptr;
-   auto struct ifaddrs *ifa_next;
-   auto struct sockaddr_dl *sdl;
+   struct ifaddrs *ifaddrs_ptr;
+   struct ifaddrs *ifa_next;
+   struct sockaddr_dl *sdl;
    const char *mac_address;
    static char mac[ETH_LEN];
 
@@ -411,7 +416,7 @@ __malloc__ inline const char *__fetchMac( const char *__device ) {
 
 /* Check the BPF device os BSD family */
 
-__pure__ inline bool __checkBPF( const char *device ) {
+inline bool __checkBPF( const char *device ) {
 
 #if defined(__BSD_SYSTEM__)
    signed int __bpf = 0, buff_len = 1;
@@ -442,7 +447,7 @@ __pure__ inline bool __checkBPF( const char *device ) {
 
 
 /* Give us the packet content */
-__pure__ inline void __show_packet( const uchar *__buff, 
+inline void __show_packet( const uchar *__buff, 
                                     const uint16 __size ) 
 {
 

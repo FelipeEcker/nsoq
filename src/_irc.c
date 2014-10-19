@@ -1,12 +1,12 @@
 /*......,,,,,,,.............................................................
 *
 * @@NAME:     Module IRC
-* @@VERSION:  1.0.2
-* @@DESC:     IRC source file (this file is part of MpTcp tool).
+* @@VERSION:  1.0.3
+* @@DESC:     IRC source file (this file is part of Nsoq tool).
 * @@AUTHOR:   Felipe Ecker (Khun) <khun@hexcodes.org>
-* @@DATE:     16/11/2012 22:45:00
+* @@DATE:     18/10/2012 16:30:00
 * @@MANIFEST:
-*      Copyright (C) Felipe Ecker 2003-2013.
+*      Copyright (C) Felipe Ecker 2003-2014.
 *      You should have received a copy of the GNU General Public License 
 *      inside this program. Licensed under GPL 3
 *      If not, write to me an e-mail please. Thank you.
@@ -48,7 +48,7 @@ static void __process( void *__raw ) {
       goto __EXIT;
    } 
 
-   auto char __send[2048];
+   char __send[2048];
    register uint16 it;
    register uint16 limit = 6;
 
@@ -101,8 +101,7 @@ static void __process( void *__raw ) {
    __EXIT:
    if (__mem) free(__mem);
 
-#if defined (__BSD_SYSTEM__)
-#else
+#if !defined (__BSD_SYSTEM__)
    return NULL;
 #endif
 }
@@ -114,9 +113,8 @@ static void __bsd_listen (  u_char *args,
                             const u_char *recvbuff )
 {
 
-   /* auto struct ether_header *h = (struct ether_header *) recvbuff; */
-   auto struct ip *ip      = (struct ip *) (recvbuff + SIZE_ETH);
-   auto struct tcphdr *tcp = (struct tcphdr *) (recvbuff + SIZE_ETH+ SIZE_IP);
+   struct ip *ip      = (struct ip *) (recvbuff + SIZE_ETH);
+   struct tcphdr *tcp = (struct tcphdr *) (recvbuff + SIZE_ETH+ SIZE_IP);
 
    if ( hardtrue((ip->ip_p != IPPROTO_TCP) ||
       (ip->ip_src.s_addr != _data.target->sin_addr.s_addr) || 
@@ -146,13 +144,13 @@ static void __bsd_listen (  u_char *args,
 
 
 #if !defined(WEAK_GCC)
-__hot__ inline static void *__packets_handler() {
+__call__ inline static void *__packets_handler() {
 #else
 inline static void *__packets_handler() {
 #endif
 
 #if defined(__BSD_SYSTEM__)
-   auto char *eth, err_buff[PCAP_ERRBUF_SIZE];
+   char *eth, err_buff[PCAP_ERRBUF_SIZE];
 
    if ( !(eth = pcap_lookupdev(err_buff)) ) {
       log("ERROR on grab system's interface. Exiting..\n\n");
@@ -180,7 +178,7 @@ inline static void *__packets_handler() {
    memset(recvbuff, 0, IRC_BUFF);
 
    register uint16 size = IRC_BUFF;
-   auto struct sockaddr_in remote;
+   struct sockaddr_in remote;
    socklen_t _sizeof = sizeof(struct sockaddr_in);
 
    register struct iphdr *recvip = (struct iphdr *) recvbuff;
@@ -223,13 +221,13 @@ inline static void *__packets_handler() {
 
 
 #if !defined(WEAK_GCC)
-__hot__ inline static bool __doCheck( const uint8 _sleep ) {
+__call__ inline static bool __doCheck( const uint8 _sleep ) {
 #else
 inline static bool __doCheck( const uint8 _sleep ) { 
 #endif
 
-   auto struct timeval _times;
-   auto fd_set beep;
+   struct timeval _times;
+   fd_set beep;
    _times.tv_sec = _sleep;
    _times.tv_usec = 2000;
    
@@ -255,8 +253,8 @@ inline static void __run( void ) {
    register uint8 tsize = sizeof(struct sockaddr);
    register struct sockaddr_in *targ = _data.target;
 
-   auto struct timeval _times;
-   auto fd_set beep, wr;
+   struct timeval _times;
+   fd_set beep, wr;
    _times.tv_sec = 5;
    _times.tv_usec = 0;
    FD_ZERO(&beep);
@@ -299,9 +297,9 @@ inline static void __run( void ) {
 
    sleep(2);
 
-   auto char auth[512];
+   char auth[512];
    register uint32 ident = rand() % 0xFFFFFFFF;
-   snprintf(auth, sizeof(auth) - 1, "NICK M-%08X\n\rUSER MPTCP-%04X MPTCP-%04X %s :MPTCP\n\r",
+   snprintf(auth, sizeof(auth) - 1, "NICK M-%08X\n\rUSER Nsoq-%04X Nsoq-%04X %s :NSOQ\n\r",
    ident, ident, ident, pkt->dst);
 
    send(stream, auth, strlen(auth), 0);

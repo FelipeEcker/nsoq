@@ -1,13 +1,12 @@
 /*......,,,,,,,.............................................................
 *
 * @@NAME:     Module TCP
-* @@VERSION:  1.0.2
-* @@DESC:     TCP source file (this file is part of MpTcp tool).
+* @@VERSION:  1.0.3
+* @@DESC:     TCP source file (this file is part of Nsoq tool).
 * @@AUTHOR:   Felipe Ecker (Khun) <khun@hexcodes.org>
-* @@DATE:     24/12/2012 16:10:00
+* @@DATE:     18/10/2012 16:30:00
 * @@MANIFEST:
-* @@MANIFEST:
-*      Copyright (C) Felipe Ecker 2003-2013.
+*      Copyright (C) Felipe Ecker 2003-2014.
 *      You should have received a copy of the GNU General Public License 
 *      inside this program. Licensed under GPL 3
 *      If not, write to me an e-mail please. Thank you.
@@ -59,14 +58,14 @@ __malloc__ static const char *__tagging( struct tcphdr *__tcp ) {
 
 static void __doListenConnections( void ) {
 
-   auto uchar recvbuff[pkt->buffsize + BIGBUFF] __nocommon__;
-   auto char address[INET_ADDRSTRLEN] __nocommon__; // motd[30];
-   auto struct sockaddr_in remote;
-   auto unsigned size = sizeof(struct sockaddr_in);
+   uchar recvbuff[pkt->buffsize + BIGBUFF] __nocommon__;
+   char address[INET_ADDRSTRLEN] __nocommon__; // motd[30];
+   struct sockaddr_in remote;
+   unsigned size = sizeof(struct sockaddr_in);
    signed int sock, nsock, __input = 0;
 
-   auto struct timeval _times;
-   auto fd_set arrived;
+   struct timeval _times;
+   fd_set arrived;
 
    log("Listening for TCP connections on local port (%d):\n", pkt->srcport);
 
@@ -142,12 +141,11 @@ static void __bsd_listen ( uchar *args,
                            const uchar *recvbuff )
 {
 
-   /* auto struct ether_header *h = (struct ether_header *) recvbuff; */
-   auto struct ip *ip      = (struct ip *) (recvbuff + SIZE_ETH);
-   auto struct tcphdr *tcp = (struct tcphdr *) (recvbuff + SIZE_IP+ SIZE_ETH);
+   struct ip *ip      = (struct ip *) (recvbuff + SIZE_ETH);
+   struct tcphdr *tcp = (struct tcphdr *) (recvbuff + SIZE_IP+ SIZE_ETH);
 
    __sysdate();
-   auto char aux[20] __nocommon__, address[INET_ADDRSTRLEN] __nocommon__;
+   char aux[20] __nocommon__, address[INET_ADDRSTRLEN] __nocommon__;
 
    if (ip->ip_p != IPPROTO_TCP) goto __MY_END;
    if ((args) && (_data.target->sin_addr.s_addr != ip->ip_src.s_addr) ) 
@@ -169,6 +167,7 @@ static void __bsd_listen ( uchar *args,
       type, address, ntohs(tcp->th_sport), ntohs(ip->ip_len), ip->ip_ttl);
    }
 
+   if (type) free((void *) type);
    if (pkt->packetDisplay) __show_packet(&recvbuff[14], ntohs(ip->ip_len));
    if (args) pcap_breakloop(__session);
 
@@ -181,7 +180,7 @@ static void __bsd_listen ( uchar *args,
 inline static void __doListen( void ) {
 
 #if defined(__BSD_SYSTEM__)
-   auto char *eth, err_buff[PCAP_ERRBUF_SIZE];
+   char *eth, err_buff[PCAP_ERRBUF_SIZE];
 
    if (pkt->port)
       show("Listening for TCP data on local port (%d) or remote port (%d) [Capturing size %d bytes]:\n",
@@ -212,13 +211,13 @@ inline static void __doListen( void ) {
 
    __set_hdrincl(sock);
 
-   auto uchar recvbuff[pkt->buffsize + 128];
+   uchar recvbuff[pkt->buffsize + 128];
    register uint32 size = sizeof(recvbuff);
-   auto struct sockaddr_in remote;
+   struct sockaddr_in remote;
    unsigned _sizeof = sizeof(struct sockaddr_in);
 
    const char *type;
-   auto char address[INET_ADDRSTRLEN];
+   char address[INET_ADDRSTRLEN];
    struct iphdr *recvip = (struct iphdr *) recvbuff;
    struct tcphdr *recvtcp = (struct tcphdr *) (recvbuff + SIZE_IP);
 
@@ -275,8 +274,12 @@ inline static struct tcphdr *__packing( uchar *__buffer,
       uint8 proto;
       uint16 tcpsiz;
       struct tcphdr tcp;
+/* llvm doesnt support variable size in structure */
+#ifdef __llvm__
+      uchar data[52 - (SIZE_IP + SIZE_TCP)];
+#else
       uchar data[__size - (SIZE_IP + SIZE_TCP)];
-
+#endif
    } __packed__ tcpaux;
 
 #if defined(__LINUX_SYSTEM__)
@@ -367,7 +370,7 @@ inline static struct tcphdr *__packing( uchar *__buffer,
 inline static void __doResponse( const uint32 sock ) {
 
 #if defined(__BSD_SYSTEM__)
-   auto char *eth, err_buff[PCAP_ERRBUF_SIZE];
+   char *eth, err_buff[PCAP_ERRBUF_SIZE];
    void *__breakout = (void *) 0xFF;
 
    if ( !(eth = pcap_lookupdev(err_buff)) ) {
@@ -392,15 +395,15 @@ inline static void __doResponse( const uint32 sock ) {
    uchar recvbuff[pkt->buffsize + 52];
    memset(recvbuff, 0, sizeof(recvbuff));
 
-   auto char address[INET_ADDRSTRLEN];
+   char address[INET_ADDRSTRLEN];
    socklen_t _sizeof = sizeof(struct sockaddr_in);
-   auto struct sockaddr_in remote;
-   auto struct timeval _times;
+   struct sockaddr_in remote;
+   struct timeval _times;
 
    struct iphdr *recvip = (struct iphdr *) recvbuff;
    struct tcphdr *recvtcp = (struct tcphdr *) (recvbuff + SIZE_IP);
 
-   auto fd_set beep;
+   fd_set beep;
    _times.tv_sec = 4;
    _times.tv_usec = 0;
    FD_ZERO(&beep);
@@ -438,11 +441,14 @@ inline static void __doResponse( const uint32 sock ) {
 
 inline static void *__doSimpleConnection() {
 
-   auto uint32 sock;
+   uint32 sock;
 
    pthread_mutex_lock(&__mutex);
    /* TCP STREAM socket */
-   if ( !( sock = __socketPool(false, __TCP_MODE__, true)) ) return NULL;
+   if ( !( sock = __socketPool(false, __TCP_MODE__, true)) ) {
+      pthread_mutex_unlock(&__mutex);
+      pthread_exit(NULL);
+   }
    pthread_mutex_unlock(&__mutex);
 
    unsigned __sizeof = sizeof(struct sockaddr);
@@ -452,9 +458,9 @@ inline static void *__doSimpleConnection() {
    log("Connecting to host [%s] on port %d...\n", 
    address, ntohs(_data.target->sin_port));
 
-   auto char buff[BIGBUFF];
-   auto struct timeval _times;
-   auto fd_set beep;
+   char buff[BIGBUFF];
+   struct timeval _times;
+   fd_set beep;
    register signed int __limit = 0, __input = 0;
 
    __sysdate();
@@ -466,7 +472,7 @@ inline static void *__doSimpleConnection() {
    if ( connect(sock, (struct sockaddr *) _data.target, __sizeof) < 0) {
       log("Unable to connect on host. Connection refused.\n");
       kill(getpid(), SIGALRM);
-      return NULL;
+      pthread_exit(NULL);
    }
 
    log("\n(%02d:%02d:%02d) Connected on Host [%s]:\n",
@@ -503,23 +509,29 @@ inline static void *__doSimpleConnection() {
 
 
    log("[Closed connection]\n");
-   return NULL;
+   pthread_exit(NULL);
 }
 
 
 #if !defined(WEAK_GCC)
-__hot__ inline static void *__send() {
+__call__ inline static void *__send() {
 #else
 inline static void *__send() {
 #endif
 
-   auto uint32 nsock, sock;
+   uint32 nsock, sock;
 
    pthread_mutex_lock(&__mutex);
    /* RAW socket*/
-   if ( !( sock  = __socketPool(true, 0, false)) ) return NULL;
+   if ( !( sock  = __socketPool(true, 0, false)) ) {
+      pthread_mutex_unlock(&__mutex);
+      pthread_exit(NULL);
+   }
    /* TCP RAW socket */
-   if ( !( nsock = __socketPool(false, __TCP_MODE__, false)) ) return NULL;
+   if ( !( nsock = __socketPool(false, __TCP_MODE__, false)) ) {
+      pthread_mutex_unlock(&__mutex);
+      pthread_exit(NULL);
+   }
    pthread_mutex_unlock(&__mutex);
 
    __set_hdrincl(sock);
@@ -544,7 +556,7 @@ inline static void *__send() {
    __cache(&_data.target);
 
 #if defined(__BSD_SYSTEM__)
-   auto bool ret;
+   bool ret;
 #endif
 
    do {
@@ -585,12 +597,12 @@ inline static void *__send() {
       __packing(cbuffer, (uint16) sizeof(cbuffer), _data.source, _data.target);
    } while (pkt->continuous || pkt->flood || isConted);
 
-   return NULL;
+   pthread_exit(NULL);
 }
 
 
 #if !defined(WEAK_GCC)
-__hot__ inline static void *__burst() {
+__call__ inline static void *__burst() {
 #else
 inline static void *__burst() {
 #endif
@@ -599,8 +611,12 @@ inline static void *__burst() {
 
    pthread_mutex_lock(&__mutex);
    /* RAW socket*/
-   if ( !( sock = __socketPool(true, 0, false)) ) return NULL;
+   if ( !( sock = __socketPool(true, 0, false)) ) {
+      pthread_mutex_unlock(&__mutex);
+      pthread_exit(NULL);
+   }
    pthread_mutex_unlock(&__mutex);
+
    __set_hdrincl(sock);
 
    uchar cbuffer[pkt->buffsize + 52] __nocommon__;
@@ -609,7 +625,7 @@ inline static void *__burst() {
    struct tcphdr *__tcp = __packing(cbuffer, (uint16) sizeof(cbuffer), 
                           _data.source, _data.target);
 
-   auto char address[INET_ADDRSTRLEN] __nocommon__;
+   char address[INET_ADDRSTRLEN] __nocommon__;
    inet_ntop(AF_INET, &(_data.target->sin_addr), address, INET_ADDRSTRLEN);
 
    const char *type = __tagging(__tcp);
@@ -636,7 +652,7 @@ inline static void *__burst() {
    kill(getpid(), SIGALRM);
 
    __RETURN:
-   return NULL;
+   pthread_exit(NULL);
 }
 
 
@@ -669,7 +685,6 @@ bool tcp(const char **pull __unused__ ) {
    }
 
    __FINISHTCP:
-   pthread_exit(0);
    return true;
 }
 

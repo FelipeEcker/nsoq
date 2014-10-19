@@ -1,12 +1,12 @@
 /*......,,,,,,,.............................................................
 *
 * @@NAME:     Module ARP
-* @@VERSION:  1.0.2
-* @@DESC:     ARP source file (this file is part of MpTcp tool).
+* @@VERSION:  1.0.3
+* @@DESC:     ARP source file (this file is part of Nsoq tool).
 * @@AUTHOR:   Felipe Ecker (Khun) <khun@hexcodes.org>
-* @@DATE:     20/11/2012 04:30:00
+* @@DATE:     18/10/2012 16:30:00
 * @@MANIFEST:
-*      Copyright (C) Felipe Ecker 2003-2013.
+*      Copyright (C) Felipe Ecker 2003-2014.
 *      You should have received a copy of the GNU General Public License 
 *      inside this program. Licensed under GPL 3
 *      If not, write to me an e-mail please. Thank you.
@@ -37,7 +37,7 @@ struct __ethdr {
 #if defined(__LINUX_SYSTEM__)
 inline static struct sockaddr_ll __lookup_ether( const char *eth ) {
 
-   auto struct ifreq ifreq;
+   struct ifreq ifreq;
    static struct sockaddr_ll sll;
 
    strncpy(ifreq.ifr_ifrn.ifrn_name, eth, IFNAMSIZ);
@@ -64,7 +64,7 @@ static void __bsd_listen (  u_char *args,
                             const u_char *recvbuff )
 {
    struct __ethdr *ether = (struct __ethdr *) recvbuff;
-   auto char address_src[INET_ADDRSTRLEN], address_dst[INET_ADDRSTRLEN];
+   char address_src[INET_ADDRSTRLEN], address_dst[INET_ADDRSTRLEN];
 
    __sysdate();
    inet_ntop(AF_INET, &(ether->ipsrc), address_src, INET_ADDRSTRLEN);
@@ -119,7 +119,7 @@ inline static void __doListen() {
    (uint32) pkt->buffsize + 42);
 
 #if defined(__BSD_SYSTEM__)
-   auto char err[PCAP_ERRBUF_SIZE];
+   char err[PCAP_ERRBUF_SIZE];
 
    if ( !(__session = pcap_open_live(pkt->interface,
    pkt->buffsize + 42, true, 1, err)) ) {
@@ -139,9 +139,9 @@ inline static void __doListen() {
 
    struct __ethdr *ether = (struct __ethdr *) recvbuff;
    struct sockaddr_ll __nop__;
-   auto char address_src[INET_ADDRSTRLEN], address_dst[INET_ADDRSTRLEN];
-   auto socklen_t size = sizeof(recvbuff); 
-   auto socklen_t size_ll = sizeof(struct sockaddr_ll);
+   char address_src[INET_ADDRSTRLEN], address_dst[INET_ADDRSTRLEN];
+   socklen_t size = sizeof(recvbuff); 
+   socklen_t size_ll = sizeof(struct sockaddr_ll);
 
    __STARTING:
    memset(recvbuff, 0, size);
@@ -203,7 +203,7 @@ inline static void __doListen() {
 
 
 #if !defined(WEAK_GCC)
-__hot__ inline static void __packing
+__call__ inline static void __packing
 #else
 inline static void __packing
 #endif
@@ -258,13 +258,13 @@ static void __arping_listen ( uchar *args,
 
 
 #if !defined(WEAK_GCC)
-__hot__ inline static void __arping() {
+__call__ inline static void __arping() {
 #else
 inline static void __arping() {
 #endif
 
 #if defined(__LINUX_SYSTEM__)
-   auto uint32 sock;
+   uint32 sock;
 
    /* PF RAW socket*/
    if ( !( sock = __socketPool(false, __ARP_MODE__, false)) ) return;
@@ -284,7 +284,7 @@ inline static void __arping() {
 
    uchar cbuffer[pkt->buffsize + 42] __nocommon__;
    memset(cbuffer, 0, sizeof(cbuffer));
-   auto uint32 size_b = (uint32) sizeof(cbuffer);
+   uint32 size_b = (uint32) sizeof(cbuffer);
 
    /* ARP REQUEST packet */
    __packing(cbuffer, _data.source->sin_addr.s_addr, 
@@ -299,7 +299,7 @@ inline static void __arping() {
 
 #if defined(__BSD_SYSTEM__)
    signal(SIGCHLD, SIG_IGN);
-   auto char err[PCAP_ERRBUF_SIZE];
+   char err[PCAP_ERRBUF_SIZE];
 
    if ( !( __session = pcap_open_live(pkt->interface, 
    size_b, true, 1, err)) ) {
@@ -354,7 +354,7 @@ inline static void __arping() {
 
 
 #if !defined(WEAK_GCC)
-__hot__ inline static void __macflood() {
+__call__ inline static void __macflood() {
 #else
 inline static void __macflood() {
 #endif
@@ -364,7 +364,10 @@ inline static void __macflood() {
 
    pthread_mutex_lock(&__mutex);
    /* PF RAW socket*/
-   if ( !( sock = __socketPool(false, __ARP_MODE__, false)) ) return;
+   if ( !( sock = __socketPool(false, __ARP_MODE__, false)) ) {
+      pthread_mutex_unlock(&__mutex);
+      pthread_exit(NULL);
+   }
    pthread_mutex_unlock(&__mutex);
 
    struct sockaddr_ll addr_ll = __lookup_ether(pkt->interface);
@@ -406,11 +409,13 @@ inline static void __macflood() {
       }
       if (!(--count)) break;
    } while (pkt->continuous || pkt->flood || isConted);
+
+   pthread_exit(NULL);
 }
 
 
 #if !defined(WEAK_GCC)
-__hot__ inline static void __arpcannon() {
+__call__ inline static void __arpcannon() {
 #else
 inline static void __arpcannon() {
 #endif
@@ -431,7 +436,10 @@ inline static void __arpcannon() {
    register uint32 sock;
    pthread_mutex_lock(&__mutex);
    /* PF RAW socket */
-   if ( !( sock = __socketPool(false, __ARP_MODE__, false)) ) return;
+   if ( !( sock = __socketPool(false, __ARP_MODE__, false)) ) {
+      pthread_mutex_unlock(&__mutex);
+      pthread_exit(NULL);
+   }
    pthread_mutex_unlock(&__mutex);
 
    struct sockaddr_ll addr_ll = __lookup_ether(pkt->interface);
@@ -472,13 +480,14 @@ inline static void __arpcannon() {
       addr_ll_r, size_ll);
 #endif
    }
-
    goto __SEND;
+
+   pthread_exit(NULL);
 }
 
 
 #if !defined(WEAK_GCC)
-__hot__ inline static void __send() {
+__call__ inline static void __send() {
 #else
 inline static void __send() {
 #endif
@@ -488,7 +497,10 @@ inline static void __send() {
 
    pthread_mutex_lock(&__mutex);
    /* PF RAW socket*/
-   if ( !( sock = __socketPool(false, __ARP_MODE__, false)) ) return;
+   if ( !( sock = __socketPool(false, __ARP_MODE__, false)) ) {
+      pthread_mutex_unlock(&__mutex);
+      pthread_exit(NULL);
+   }
    pthread_mutex_unlock(&__mutex);
 
    struct sockaddr_ll addr_ll = __lookup_ether(pkt->interface);
@@ -544,11 +556,13 @@ inline static void __send() {
       }
       if (!(--count)) break;
    } while (pkt->continuous || pkt->flood || isConted);
+
+   pthread_exit(NULL);
 }
 
 
 #if !defined(WEAK_GCC)
-__hot__ inline static void __burst() {
+__call__ inline static void __burst() {
 #else
 inline static void __burst() {
 #endif
@@ -558,7 +572,10 @@ inline static void __burst() {
 
    pthread_mutex_lock(&__mutex);
    /* PF RAW socket */
-   if ( !( sock = __socketPool(false, __ARP_MODE__, false)) ) return;
+   if ( !( sock = __socketPool(false, __ARP_MODE__, false)) ) {
+      pthread_mutex_unlock(&__mutex);
+      pthread_exit(NULL);
+   }
    pthread_mutex_unlock(&__mutex);
 
    struct sockaddr_ll addr_ll = __lookup_ether(pkt->interface);
@@ -606,8 +623,9 @@ inline static void __burst() {
 #else
    sendto(sock, buffer, size, 0, (struct sockaddr *) addr_ll_r, size_r);
 #endif
-
    goto __SEND;
+
+   pthread_exit(NULL);
 }
 
 
@@ -646,7 +664,6 @@ bool arp( const char **pull __unused__ ) {
    else func = &__send;
 
    if ( !__threadPool(pkt->numThreads, func, NULL) ) return false;
-   pthread_exit(0);
 
    __FINISH_ARP:
    return true;

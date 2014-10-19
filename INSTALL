@@ -1,12 +1,12 @@
 #/*......,,,,,,,...................................................#
 #*                                                                 #
 #* @@NAME:     INSTALL                                             #
-#* @@VERSION:  2.0                                                 #
-#* @@DESC:     Information file (this file is part of MpTcp tool). #
+#* @@VERSION:  3.0                                                 #
+#* @@DESC:     Information file (this file is part of Nsoq tool).  #
 #* @@AUTHOR:   Felipe Ecker <khun@hexcodes.org>                    #
-#* @@DATE:     15/09/2012 (05:50:00)                               #
+#* @@DATE:     18/10/2014 (03:20:00)                               #
 #* @@MANIFEST:                                                     #
-#*      Copyright (c) Felipe Ecker 2003-2013.                      #
+#*      Copyright (c) Felipe Ecker 2003-2014.                      #
 #*      You should have received a copy of the GNU General Public  #
 #*      License inside this program. Licensed under GPL 3.         #
 #*      If not, write to me an e-mail please. Thank you.           #
@@ -17,16 +17,15 @@
 |........................................................|
 |                       IMPORTANT:                       |
 |                                                        |
-|       Since version 1.7, Mptcp depends of:             |
+|       Since version 1.7, Nsoq depends of:              |
 |                                                        |
 |       --> libpthread (is POSIX)                        |
 |       --> libpacap (BSD and DARWIN systems)            |
 |                                                        |
 |                                                        |
-|           Libthread is required !!                     |
-|           LibPcap is required (for BSD and Darwin)     |
+|** Libthread is required !!                             |
+|** LibPcap is required (for BSD and Darwin)             |
 |........................................................|
-
 
 
 SUPPORTED SYSTEMS:                        
@@ -34,19 +33,18 @@ SUPPORTED SYSTEMS:
 
 - Linux (posix on all architectures).
 - FreeBSD
-- Darwin MACOS (only for IOS*).
-
-
+- Darwin MAC OSX 
+- Darwin IOS*.
 
 
 BUILDING AND INSTALLATION:
 ..........................
 
 (Source):
-    - Unpack the tarball mptcp-x.x.x.tar.gz on any directory. 
-    (The directory 'MpTcp-x.x.x' will be created).
+    - Unpack the tarball nsoq-x.x.x.tar.gz on any directory. 
+    (The directory 'Nsoq-x.x.x' will be created).
 
-    - Enter to the directory MpTcp-x.x.x.
+    - Enter to the directory Nsoq-x.x.x.
 
     - Run 'make'.
     - Or run 'make static' for static binaries.
@@ -54,31 +52,24 @@ BUILDING AND INSTALLATION:
 
     - Run 'make install'.
 
-
 (For DEB package):
     - Run 'make deb'.
-    - Run 'dpkg -i DEB_PACKAGE/mptcp-x.x.x.deb' to install the DEB package.
-
+    - Run 'dpkg -i DEB_PACKAGE/nsoq-x.x.x.deb' to install the DEB package.
 
 (For RPM package):
     - Run 'make rpm'.
-    - Run 'rpm -ivh RPM_PACKAGE/<ARCH>/mptcp-x.x.x-1.<ARCH>.rpm' to install RPM package.
-
+    - Run 'rpm -ivh RPM_PACKAGE/<ARCH>/nsoq-x.x.x-1.<ARCH>.rpm' to install RPM package.
 
 (Cleaning):
      - Type: 'make clean'
-
-
 
 
 UNINSTALL:
 ..........
 
 - Just type: 'make uninstall' on terminal.
-- (For DEB package) run 'dpkg -r mptcp'.
-- (For RPM package) run 'rpm -e mptcp'.
-
-
+- (For DEB package) run 'dpkg -r nsoq'.
+- (For RPM package) run 'rpm -e nsoq'.
 
 
 DOCUMENTATION:
@@ -86,11 +77,9 @@ DOCUMENTATION:
 
 Are you looking for Manual or Documentation ?
 
-     - Type 'man mptcp' after install.
-     - Look on /usr/share/doc/mptcp/mptcp.txt after install.
-     - See: http://www.hexcodes.org/mptcp.i
- 
-
+     - Type 'man nsoq' after install.
+     - Look on /usr/share/doc/nsoq/nsoq.txt after install.
+     - See: http://www.hexcodes.org/nsoq.i
 
        
      ...........................................

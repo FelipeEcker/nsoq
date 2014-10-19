@@ -1,6 +1,17 @@
                          CHANGELOG           
 
 
+Version 1.9.4:
+(10.18.2014)
+..............
+
+- Realeased Network Security tool: Nsoq version
+- New tool name
+- [BUG] Variable size in structures for Darwin OS
+- [BUG] No warnings for cast int-to-bool on compilation
+
+
+
 Version 1.9.2:
 (07.16.2012)
 ..............

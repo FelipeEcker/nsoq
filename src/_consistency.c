@@ -1,12 +1,12 @@
 /*......,,,,,,,.............................................................
 *
 * @@NAME:     Module CONSISTENCY
-* @@VERSION:  1.0.0
-* @@DESC:     Consistency source file (this file is part of MpTcp tool).
+* @@VERSION:  1.0.1
+* @@DESC:     Consistency source file (this file is part of Nsoq tool).
 * @@AUTHOR:   Felipe Ecker (Khun) <khun@hexcodes.org>
-* @@DATE:     20/11/2012 08:00:00
+* @@DATE:     18/10/2012 16:30:00
 * @@MANIFEST:
-*      Copyright (C) Felipe Ecker 2003-2013.
+*      Copyright (C) Felipe Ecker 2003-2014.
 *      You should have received a copy of the GNU General Public License 
 *      inside this program. Licensed under GPL 3
 *      If not, write to me an e-mail please. Thank you.
@@ -22,8 +22,8 @@ const char *__doConsistency( void ) {
    const uint16 DEFAULT_WEBSTRESS_PORT   = 0x50;    /* Decimal 80   */
    const uint16 DEFAULT_IRC_PORT = 0x1A0B;          /* Decimal 6667 */
    const uint8 DEFAULT_TTL = 0x20 + (rand() % 0xDF);
-   const char *DEFAULT_IRC_ROOM = "mptcp";
-   const char *DEFAULT_IRC_PASS = "mptcp0";
+   const char *DEFAULT_IRC_ROOM = "nsoq";
+   const char *DEFAULT_IRC_PASS = "nsoqpass";
 
    uint8 __doCheck;
 
@@ -80,6 +80,7 @@ const char *__doConsistency( void ) {
    if (pkt->webType & WEB_HTTP) __doCheck <<= 0x1;
    if (pkt->webType & WEB_SYN) __doCheck <<= 0x1;
    if (pkt->webType & WEB_ACK) __doCheck <<= 0x1;
+   if (pkt->webType & WEB_SLOW) __doCheck <<= 0x1;
    if (__doCheck > 0x02) return "Invalid options: Use each WEBSTRESS mode option separatelly.";
 
    if ( (pkt->tcpType & TCP_CON) && (pkt->flood || pkt->superFlood) )

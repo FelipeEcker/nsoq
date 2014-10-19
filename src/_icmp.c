@@ -1,12 +1,12 @@
 /*......,,,,,,,.............................................................
 *
 * @@NAME:     Module ICMP
-* @@VERSION:  1.0.2
-* @@DESC:     ICMP source file (this file is part of MpTcp tool).
+* @@VERSION:  1.0.3
+* @@DESC:     ICMP source file (this file is part of Nsoq tool).
 * @@AUTHOR:   Felipe Ecker (Khun) <khun@hexcodes.org>
-* @@DATE:     22/11/2012 14:20:00
+* @@DATE:     18/10/2012 16:30:00
 * @@MANIFEST:
-*      Copyright (C) Felipe Ecker 2003-2013.
+*      Copyright (C) Felipe Ecker 2003-2014.
 *      You should have received a copy of the GNU General Public License 
 *      inside this program. Licensed under GPL 3
 *      If not, write to me an e-mail please. Thank you.
@@ -52,17 +52,16 @@ static void __bsd_listen (   uchar *args,
                      const uchar *recvbuff ) 
 {
 
-   /* auto struct ether_header *h = (struct ether_header *) recvbuff; */
-   auto struct ip *ip        = (struct ip *) (recvbuff + SIZE_ETH);
-   auto struct icmp *icmp    = (struct icmp *) (recvbuff + SIZE_IP + SIZE_ETH);
-   auto struct in_addr *mask = (struct in_addr *) (recvbuff + SIZE_ICMP + SIZE_IP + SIZE_ETH);
+   struct ip *ip        = (struct ip *) (recvbuff + SIZE_ETH);
+   struct icmp *icmp    = (struct icmp *) (recvbuff + SIZE_IP + SIZE_ETH);
+   struct in_addr *mask = (struct in_addr *) (recvbuff + SIZE_ICMP + SIZE_IP + SIZE_ETH);
 
    const char **tag;
    tag = tags;
    __tagging(tag, (uint32) icmp->icmp_type);
    __sysdate();
 
-   auto char aux[20] __nocommon__, address[INET_ADDRSTRLEN] __nocommon__;
+   char aux[20] __nocommon__, address[INET_ADDRSTRLEN] __nocommon__;
 
    if (ip->ip_p == IPPROTO_ICMP) {
 
@@ -88,7 +87,7 @@ static void __bsd_listen (   uchar *args,
 static void __doListen( void ) {
 
 #if defined(__BSD_SYSTEM__)
-   auto char *eth, err_buff[PCAP_ERRBUF_SIZE];
+   char *eth, err_buff[PCAP_ERRBUF_SIZE];
 
    show("Listening for ICMP data [Capturing size %d bytes]:\n", 
    (uint32) pkt->buffsize + 512);
@@ -109,17 +108,17 @@ static void __doListen( void ) {
    pcap_loop(__session, -1, __bsd_listen, NULL);
 
 #else
-   auto signed int sock;
+   signed int sock;
    /* ICMP RAW socket*/
    if ( !( sock = __socketPool(false, __ICMP_MODE__, false)) ) return; 
 
    uchar recvbuff[pkt->buffsize + 512] __nocommon__;
-   auto struct iphdr *ip = (struct iphdr *) recvbuff;
-   auto struct icmphdr *icmp = (struct icmphdr *) (recvbuff + SIZE_IP);
-   auto struct in_addr *mask = (struct in_addr *) (recvbuff+SIZE_IP+SIZE_ICMP);
+   struct iphdr *ip = (struct iphdr *) recvbuff;
+   struct icmphdr *icmp = (struct icmphdr *) (recvbuff + SIZE_IP);
+   struct in_addr *mask = (struct in_addr *) (recvbuff+SIZE_IP+SIZE_ICMP);
 
-   auto char aux[20] __nocommon__, address[INET_ADDRSTRLEN] __nocommon__;
-   auto struct sockaddr_in remote;
+   char aux[20] __nocommon__, address[INET_ADDRSTRLEN] __nocommon__;
+   struct sockaddr_in remote;
    unsigned size = sizeof(struct sockaddr_in);
    const char **tag;
 
@@ -309,16 +308,19 @@ inline static void __doResponse( register signed int sock ) {
 
 
 #if !defined(WEAK_GCC)
-__hot__ inline static void *__send() {
+__call__ inline static void *__send() {
 #else
 inline static void *__send() {
 #endif
 
-   auto signed int sock;
+   signed int sock;
 
    pthread_mutex_lock(&__mutex);
    /* ICMP RAW socket*/
-   if ( !( sock = __socketPool(false, __ICMP_MODE__, false)) ) return NULL;
+   if ( !( sock = __socketPool(false, __ICMP_MODE__, false)) ) {
+      pthread_mutex_unlock(&__mutex);
+      pthread_exit(NULL);
+   }
    pthread_mutex_unlock(&__mutex);
 
    __set_broadcast(sock);
@@ -368,12 +370,13 @@ inline static void *__send() {
       }
       if (!(--count)) break;
    } while (pkt->continuous || pkt->flood || isConted);
-   return NULL;
+
+   pthread_exit(NULL);
 }
 
 
 #if !defined(WEAK_GCC)
-__hot__ inline static void *__burst() {
+__call__ inline static void *__burst() {
 #else
 inline static void *__burst() {
 #endif
@@ -382,7 +385,10 @@ inline static void *__burst() {
 
    pthread_mutex_lock(&__mutex);
    /* ICMP RAW socket*/
-   if ( !( sock = __socketPool(false, __ICMP_MODE__, false)) ) return NULL;
+   if ( !( sock = __socketPool(false, __ICMP_MODE__, false)) ) {
+      pthread_mutex_unlock(&__mutex);
+      pthread_exit(NULL);
+   }
    pthread_mutex_unlock(&__mutex);
 
    __set_broadcast(sock);
@@ -420,7 +426,7 @@ inline static void *__burst() {
    kill(getpid(), SIGALRM);
 
    __RETURN:
-   return NULL;
+   pthread_exit(NULL);
 }
 
 
@@ -446,8 +452,6 @@ bool icmp( const char **pull __unused__ ) {
    } else {
       if ( !__threadPool(pkt->numThreads, &__burst, NULL) ) return false;
    }
-
-   pthread_exit(0);
 
    __LEAVINGNOW:
    return true;
