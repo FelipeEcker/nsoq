@@ -165,10 +165,9 @@ Nsoq official documentation: See [here.](http://www.nsoq.org)
 ## DISPONIBILITY
 ----------------
 
-   Nsoq is available to anyone who wants to know, manipulate, or disassembly
-   the tool. Nsoq is licensed under GPL and Free Software Foundation.<BR/> 
+   Nsoq is licensed under GPL and Free Software Foundation.<BR/> 
    A copy of the license accompanies the software.<BR/>
    Licensed under GPL 3 - Copyright (C) Felipe Ecker.
    
-   Nsoq can be freely downloaded across of specif packets here: 
+   Nsoq can be freely downloaded here: 
    [http://www.nsoq.org](http://www.nsoq.org)
