@@ -226,7 +226,7 @@ int main( int argc, char **argv ) {
    log("\n\t\tStarting Nsoq %s at [%02d.%s.%02d - %02d:%02d:%02d]\n",VERSION,
    _t->tm_mday,month,_t->tm_year+1900,_t->tm_hour,_t->tm_min,_t->tm_sec);
 
-   log("\t\t\tNsoq Project <www.hexcodes.org>\n\n");
+   log("\t\t\tNsoq Project <www.nsoq.org>\n\n");
    srand(time(NULL));
 
    register unsigned opt, input, i = 0;

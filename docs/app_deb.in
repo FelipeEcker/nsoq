@@ -6,5 +6,5 @@ Installed-Size: 62k
 Depends:
 Section: Networking
 Priority: Standard
-Homepage: http://www.hexcodes.org/nsoq.i
+Homepage: http://www.nsoq.org
 Description: Nsoq is a light Network Security tool for raw packets, connections and RSOI handler.

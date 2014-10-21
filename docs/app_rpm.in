@@ -32,7 +32,7 @@ Source: %{appname}-%{version}.tar.gz
 License: GPL Version 3
 Group: Applications
 BuildRoot: /var/tmp/rpm-%{name}-%{version}
-URL: http://www.hexcodes.org
+URL: http://www.nsoq.org
 Packager: Felipe Ecker (Khun) <khun@hexcodes.org>
 Prefix: /
 

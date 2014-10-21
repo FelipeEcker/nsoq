@@ -433,16 +433,16 @@ _________
    # nsoq -lI
       ICMP listen mode. Listen for ICMP packets like PINGs.
 
-   # nsoq -It -d www.hexcodes.org -c
+   # nsoq -It -d www.nsoq.org -c
       Send ICMP packets (Timestamp Request) on continuous mode to server 
-      "www.hexcodes.org".
+      "www.nsoq.org".
 
-   # nsoq -s 10.1.100.100 -d www.hexcodes.org -u -p 4140
+   # nsoq -s 10.1.100.100 -d www.nsoq.org -u -p 4140
       Send an empty UDP packet with spoofed source ip "10.1.100.100" to host
       "hexcodes" on port 4140.
 
-   # nsoq -d www.hexcodes.org -u -p 9000 -P 22000 -F 900 -q 20
-      Send only 20 UDP packets to server "www.hexcodes.org" and to port 9000,
+   # nsoq -d www.nsoq.org -u -p 9000 -P 22000 -F 900 -q 20
+      Send only 20 UDP packets to server "www.nsoq.org" and to port 9000,
       from source port 22000 with flood Delay of 900 miliseconds.
 
    # nsoq -d 201.1.0.13 -Ie -x 512 -t 50 -z
@@ -466,8 +466,8 @@ _________
    # nsoq -lT -P 2134 -D
       Listen for TCP packets on local port "2134" and show the packet content.
 
-   # nsoq -d www.hexcodes.org -Tr -p 8080 -n 12 -b
-      Send TCP RST packets to server "www.hexcodes.org" on port 8080, with 12
+   # nsoq -d www.nsoq.org -Tr -p 8080 -n 12 -b
+      Send TCP RST packets to server "www.nsoq.org" on port 8080, with 12
       threads and super flood mode (HOT).
 
    # nsoq -H FF:FF:FF:FF:FF:FF
@@ -655,9 +655,9 @@ ____________
    server may fail in their services or become unavailable while the attack
    lasts (DDoS). Eg:
 
-   # nsoq -d www.hexcodes.org -W -n 20
+   # nsoq -d www.nsoq.org -W -n 20
      Sets the nsoq to "Stress Test mode", where the Nsoq will send many 
-     shootings on super flooding mode to server "www.hexcodes.org" on port 80
+     shootings on super flooding mode to server "www.nsoq.org" on port 80
      (Default WEB Service), and with 20 threads. This option will give a great
      overhead on target where it will try to exhaust the services WEB based. 
      The threads usage also can to intensify the attack. The number of threads
@@ -714,8 +714,8 @@ ____________
    they may cause unavailability of the target's services or the complete
    unavailability of the network's target.
 
-   # nsoq -d www.hexcodes.org -Ie -b
-      Send ICMP packets type Echo Request (PING) to server "www.hexcodes.org"
+   # nsoq -d www.nsoq.org -Ie -b
+      Send ICMP packets type Echo Request (PING) to server "www.nsoq.org"
       on super flood mode.
 
    # nsoq -d 10.0.0.10 -p 900 -u -b -x 1300
@@ -918,13 +918,12 @@ ______________
    of the license accompanies the software. 
    Licensed under GPL 3 - Copyright (C) Felipe Ecker.
 
-   Nsoq can be freely downloaded here: 
-   www.hexcodes.org/tools/nsoq/downloads/
+   Nsoq can be freely downloaded here: http://www.nsoq.org
 
                                   Thank you.
 
 
               _____________________________________________________
                     Felipe Ecker (Khun) <khun@hexcodes.org>
-                               -www.hexcodes.org-
+                               -www.nsoq.org-
 

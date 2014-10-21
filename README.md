@@ -66,16 +66,16 @@ Nsoq official documentation: See [here.](http://www.nsoq.org)
    # nsoq -lI
       ICMP listen mode. Listen for ICMP packets like PINGs.
 
-   # nsoq -It -d www.hexcodes.org -c
+   # nsoq -It -d www.nsoq.org -c
       Sends ICMP packets (Timestamp Request) on continuous mode to server 
-      "www.hexcodes.org".
+      "www.nsoq.org".
 
-   # nsoq -s 10.1.100.100 -d www.hexcodes.org -u -p 4140
+   # nsoq -s 10.1.100.100 -d www.nsoq.org -u -p 4140
       Sends an empty UDP packet with spoofed source ip "10.1.100.100" to host
       "hexcodes" on port 4140.
 
-   # nsoq -d www.hexcodes.org -u -p 9000 -P 22000 -F 900 -q 20
-      Sends only 20 UDP packets to server "www.hexcodes.org" and to port 9000,
+   # nsoq -d www.nsoq.org -u -p 9000 -P 22000 -F 900 -q 20
+      Sends only 20 UDP packets to server "www.nsoq.org" and to port 9000,
       from source port 22000 with flood Delay of 900 miliseconds.
 
    # nsoq -d 201.1.0.13 -Ie -x 512 -t 50 -z
@@ -99,8 +99,8 @@ Nsoq official documentation: See [here.](http://www.nsoq.org)
    # nsoq -lT -P 2134 -D
       Listen for TCP packets on local port "2134" and show the packet content.
 
-   # nsoq -d www.hexcodes.org -Tr -p 8080 -n 12 -b
-      Sends TCP RST packets to server "www.hexcodes.org" on port 8080, with 12
+   # nsoq -d www.nsoq.org -Tr -p 8080 -n 12 -b
+      Sends TCP RST packets to server "www.nsoq.org" on port 8080, with 12
       threads and super flood mode (HOT).
 
    # nsoq -H FF:FF:FF:FF:FF:FF
