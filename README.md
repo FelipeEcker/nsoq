@@ -5,22 +5,11 @@ Nsoq official documentation: See [here.](http://www.nsoq.org)
 ## About
 --------
 
-   Nsoq is a Network Security tool for raw packets manipulation that allows a
-   large number of options. Its primary purpose is analyze and test several 
-   scenarios of TCP/IP environments, such TCP/UDP packets and low levels 
-   ARP/RARP packets.<BR/>
-   Nsoq can send packets to any target type (like hostnames, IPs and MAC address)
-   like handling many fields/headers like: Source/Destination IP address,
-   Source/Destination MAC address, TCP flags, ICMP types, TCP/UDP/ICMP packet
-   size, payloads ARP/RARP, etc.
+Nsoq is a Network Security Tool for packets manipulation that allows a large number of options. Its primary purpose is analyze and test several scenarios of TCP/IP environments, such TCP/UDP packets and low levels ARP/RARP packets. Nsoq sends packets to any target type (hostnames, IPs and MAC address) handling many fields/headers like: Source/Destination IP address, Source/Destination MAC address, TCP flags, ICMP types, TCP/UDP/ICMP packet size, payloads ARP/RARP, etc.
 
-   Nsoq is able to operate into the RSOI mode (Remote System over IRC), where 
-   the tool can surrender all control of machine resources to some specific IRC
-   channel, also called Hive Mind option.
-   
-   Nsoq exeutes sistematically many types of network based attacks, like packet
-   attacks, MAC/IP Spoofing, DoS/DDoS attacks, ARP Poison, MAC Flooding and
-   Web Stress Testing.
+Nsoq is able to operate into the RSOI mode (Remote System over IRC), where the tool can surrender all control of machine resources to some specific IRC channel, also called Hive Mind option.
+
+Nsoq exeutes sistematically many types of network based attacks, like packet attacks, MAC/IP Spoofing, DoS/DDoS attacks, ARP Poison, MAC Flooding and Web Stress Testing. 
 
 <BR/>
 
