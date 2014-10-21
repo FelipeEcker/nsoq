@@ -171,4 +171,4 @@ Nsoq official documentation: See [here.](http://www.nsoq.org)
    Licensed under GPL 3 - Copyright (C) Felipe Ecker.
    
    Nsoq can be freely downloaded across of specif packets here: 
-   Downloads: [http://www.nsoq.org](http://www.nsoq.org)
+   [http://www.nsoq.org](http://www.nsoq.org)
