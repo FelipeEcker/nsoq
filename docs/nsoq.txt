@@ -24,7 +24,7 @@ ____________
    the tool can surrender all control of machine resources to some specific 
    IRC channel, also called Hive Mind option.
 
-   Nsoq exeutes sistematically many types of network based attacks, like 
+   Nsoq executes sistematically many types of network based attacks, like 
    packet attacks, MAC/IP Spoofing, DoS/DDoS attacks, ARP Poison, MAC Flooding
    and Web Stress Testing.
 
