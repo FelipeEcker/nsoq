@@ -9,7 +9,7 @@ Nsoq is a Network Security Tool for packets manipulation that allows a large num
 
 Nsoq is able to operate into the RSOI mode (Remote System over IRC), where the tool can surrender all control of machine resources to some specific IRC channel, also called Hive Mind option.
 
-Nsoq exeutes sistematically many types of network based attacks, like packet attacks, MAC/IP Spoofing, DoS/DDoS attacks, ARP Poison, MAC Flooding and Web Stress Testing. 
+Nsoq executes sistematically many types of network based attacks, like packet attacks, MAC/IP Spoofing, DoS/DDoS attacks, ARP Poison, MAC Flooding and Web Stress Testing. 
 
 <BR/>
 
