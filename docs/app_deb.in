@@ -7,4 +7,4 @@ Depends:
 Section: Networking
 Priority: Standard
 Homepage: http://www.nsoq.org
-Description: Nsoq is a light Network Security tool for raw packets, connections and RSOI handler.
+Description: Nsoq is a Network Security tool for packet manipulation, connections and RSOI handler.

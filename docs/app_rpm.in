@@ -37,7 +37,7 @@ Packager: Felipe Ecker (Khun) <khun@hexcodes.org>
 Prefix: /
 
 %description
-Felipe Ecker - %{name} (Mpctp is a tool for raw packets manipulation, connections manipulations and RSOI handler)
+Felipe Ecker - %{name} (Nsoq is a Network Security tool for packet manipulation, connections and RSOI handler)
 
 %install
 install -d $RPM_SOURCE_DIR/%{_rpmdir}
@@ -58,8 +58,8 @@ tar zfx $RPM_SOURCE_DIR/%{appname}-%{version}.tar.gz -C $RPM_BUILD_ROOT
 
 %changelog
 * Sun Oct 19 2014 Felipe Ecker (Khun) <khun@hexcodes.org>
-- Released Nsoq version name
-- New release 1.9.4
+- Released Nsoq version.
+- New release 1.9.4.
 
 * Fri Dec 21 2012 Felipe Ecker (Khun) <khun@hexcodes.org>
 - Created RPM package.
