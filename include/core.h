@@ -221,6 +221,11 @@ char addressbuff[sizeof(struct sockaddr_in)*2];
 pcap_t *__session;
 #endif
 
+struct __socks {
+   int sock;
+   bool up;
+} __packed__;
+
 struct __data {
    struct sockaddr_in *source;
    struct sockaddr_in *target;

