@@ -70,7 +70,7 @@ extern bool irc( const char ** ) __call__;
    show("\n  -q <Number Packets> Number of packets to send");                \
    show("\n  -c                  Continuous mode (1 second delay)");         \
    show("\n  -F <Delay>          Flood mode (microseconds delay)");          \
-   show("\n  -b                  Super Flood (CAUTION)");                    \
+   show("\n  -b                  Hard Flood (CAUTION)");                    \
    show("\n  -n <Number Threads> Number of threads");                        \
    show("\n  -x <Buffer Size>    Sets the packet size");                     \
    show("\n  -t <TTL>            TTL option");                               \
@@ -120,6 +120,7 @@ extern bool irc( const char ** ) __call__;
    show("\n  -K                  TCP ACK attack");                           \
    show("\n  -Y                  SLOWLORIS based attack");                   \
    show("\n  [INFO] Use the -p <port> to set other port than 80 (Default 80)");\
+   show("\n  [INFO] Use the -F <seconds> to set a delay between slowloris shoots (Default 10 sec)");\
    show("\n\n                          <RSOI - HIVE MIND> Options:");        \
    show("\n  -N <IRC Network>    IRC server to connect");                    \
    show("\n  -L <Channel>        IRC server's channel (Use without \"#\" character)");\

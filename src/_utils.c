@@ -59,8 +59,7 @@ __malloc__ inline const char *eth_ntoa( struct eth_addr *__addr ) {
    return __buff;
 }
 
-/* GLIBC ether_aton_r(). RE-writen here for BSD campatible. 
-Sorry dear Stallman :) */
+/* GLIBC ether_aton_r(). RE-writen here for BSD campatible. */
 struct eth_addr *eth_aton_r ( const char *asc, struct eth_addr *addr ) {
 
    register size_t cnt;
@@ -471,7 +470,7 @@ inline void __show_packet( const uchar *__buff,
    for ( ;; it += 2 ) {
 
       if ( it && !(it % 16) ) show("\tbytes %02d-%02d:\t%s %s\n", 
-      (it-16), (it-1), hexa = __hexa, asc= __asc);
+      (it-16), (it-1), hexa = __hexa, asc = __asc);
 
       if (it >= __size) {
          if(it % 16) {

@@ -236,9 +236,6 @@ inline static void __udp_stress() {
 
    __packing(WEB_UDP, cbuffer, (uint32) sizeof(cbuffer), _data.source, _data.target);
 
-   show("[WEB STRESS] Sending UDP packets to host [%s] on port %d...\n", 
-   pkt->dst, pkt->port);
-
    register uint8 tsize = sizeof(struct sockaddr_in);
    register uint8 size = sizeof(cbuffer);
    register uchar *buffer = cbuffer;
@@ -274,7 +271,6 @@ inline static void __tcp_stress() {
    register uint8 tsize = sizeof(struct sockaddr);
    register struct sockaddr_in *targ = _data.target;
 
-   show("Connecting to host on port %d...\n", pkt->port);
    connect(sock, (struct sockaddr *) targ, tsize);
 
    struct timeval _times;
@@ -299,10 +295,6 @@ inline static void __tcp_stress() {
 
    register uchar *data = cbuffer;
    register uint32 size = sizeof(cbuffer);
-
-   show("[Connected]\n");
-   show("[WEB STRESS] Making TCP connections to the host [%s] on port %d..\n",
-   pkt->dst, pkt->port);
 
    __CONNECT:
       sock = socket(AF_INET, SOCK_STREAM, 0);
@@ -346,7 +338,6 @@ inline static void __http_stress() {
       "User-Agent: Nsoq Signature\r\n"
       "Keep-Alive: 10000\r\n\r\n", pkt->dst);
 
-   show("Connecting to host on port %d...\n", pkt->port);
    connect(sock, (struct sockaddr *) targ, tsize);
 
    struct timeval _times;
@@ -360,7 +351,6 @@ inline static void __http_stress() {
 
    if ( select(sock+1, &beep, &wr, NULL, &_times) != 1) {
       log("Unable to connect on host. Closed port ??\n");
-      log("[Timeout]\n");
       kill(getpid(), SIGALRM);
       pthread_exit(NULL);
    } 
@@ -369,10 +359,6 @@ inline static void __http_stress() {
    signal(SIGPIPE, SIG_IGN);
    register char *data = __http;
    register uint16 size = strlen(__http);
-
-   show("[Connected]\n");
-   show("[WEB STRESS] Making HTTP Requests to host [%s] on port %d...\n", 
-   pkt->dst, pkt->port);
 
    __WEB:
       sock = socket(AF_INET, SOCK_STREAM, 0);
@@ -410,8 +396,6 @@ inline static void __icmp_stress() {
    memset(cbuffer, 0, sizeof(cbuffer));
    __packing(WEB_ICMP, cbuffer, (uint16) sizeof(cbuffer), _data.source, _data.target);
 
-   show("[WEB STRESS] Sending ICMP packets to host [%s]...\n", pkt->dst);
-
    register uint8 tsize = sizeof(struct sockaddr_in);
    register uint32 size = sizeof(cbuffer);
    register uchar *buffer = cbuffer;
@@ -447,9 +431,6 @@ inline static void __syn_stress() {
    memset(cbuffer, 0, sizeof(cbuffer));
 
    __packing(WEB_TCP, cbuffer, (uint16) sizeof(cbuffer), _data.source, _data.target);
-
-   show("[WEB STRESS] Sending TCP SYN packets to host [%s] on port %d...\n", 
-   pkt->dst, pkt->port);
 
    register uint8 tsize = sizeof(struct sockaddr_in);
    register uint32 size = sizeof(cbuffer);
@@ -487,9 +468,6 @@ inline static void __ack_stress() {
    memset(cbuffer, 0, sizeof(cbuffer));
 
    __packing(WEB_TCP, cbuffer, (uint16) sizeof(cbuffer), _data.source, _data.target);
-
-   show("[WEB STRESS] Sending TCP ACK-PSH packets to host [%s] on port %d..\n",
-   pkt->dst, pkt->port);
 
    register uint8 tsize = sizeof(struct sockaddr_in);
    register uint32 size = sizeof(cbuffer);
@@ -535,7 +513,6 @@ inline static void __slow_stress() {
       "User-Agent: Nsoq Signature\r\n"
       "Keep-Alive: 900\r\n", pkt->dst);
 
-   show("Connecting to host on port %d...\n", pkt->port);
    connect(sock, (struct sockaddr *) targ, tsize);
 
    struct timeval _times;
@@ -549,7 +526,6 @@ inline static void __slow_stress() {
 
    if ( select(sock+1, &beep, &wr, NULL, &_times) != 1) {
       log("Unable to connect on host. Closed port ??\n");
-      log("[Timeout]\n");
       kill(getpid(), SIGALRM);
       pthread_exit(NULL);
    }
@@ -558,14 +534,13 @@ inline static void __slow_stress() {
    signal(SIGPIPE, SIG_IGN);
 
    register char *data = __http;
-   register uint16 size;
+   register uint16 size, i;
 
-   show("[Connected]\n");
-   show("[WEB STRESS] Making SlowLoris HTTP Requests to host [%s] on port %d...\n",
-   pkt->dst, pkt->port);
+   char payload[10];
+   snprintf(payload, sizeof(payload) - 1, "Nsoq: \r\n");
+   int size_p = strlen(payload);
 
    struct __socks socks[50];
-   int i;
    for (i=0; i< 50; i++) socks[i].up = false;;
 
    __WEB:
@@ -610,16 +585,14 @@ inline static void __slow_stress() {
          }
 
 __SEND_DATA:
-         snprintf(data, sizeof(__http) - 1, "Nsoq: \r\n");
-         size = strlen(data);
-         if ( send(socks[i].sock, data, size, 0) == -1 ) {
+         if ( send(socks[i].sock, payload, size_p, 0) == -1 ) {
             close(socks[i].sock);
             socks[i].up = false;
             break;
          }
       }
 
-      sleep(10);
+      sleep(pkt->flood ? pkt->flood : 10);
    goto __WEB;
 
    pthread_exit(NULL);
@@ -638,14 +611,35 @@ bool web( const char **pull __unused__ ) {
    if (!__lookup(_data.target, pkt->dst, pkt->port, false)) return false;
 
    const void *func;
-   if (pkt->webType & WEB_UDP) func = &__udp_stress;
-   else if (pkt->webType & WEB_TCP) func = &__tcp_stress;
-   else if (pkt->webType & WEB_HTTP) func = &__http_stress;
-   else if (pkt->webType & WEB_ICMP) func = &__icmp_stress;
-   else if (pkt->webType & WEB_SYN) func = &__syn_stress;
-   else if (pkt->webType & WEB_ACK) func = &__ack_stress;
-   else if (pkt->webType & WEB_SLOW) func = &__slow_stress;
-   else func = NULL;
+   if (pkt->webType & WEB_UDP) {
+      func = &__udp_stress;
+      show("[WEB STRESS] Sending UDP packets to host [%s] on port %d [%d threads]...\n\n",
+      pkt->dst, pkt->port, pkt->numThreads ? pkt->numThreads : 1);
+   } else if (pkt->webType & WEB_TCP) {
+      func = &__tcp_stress;
+      show("[WEB STRESS] Making TCP connections to the host [%s] on port %d [%d threads]...\n\n",
+      pkt->dst, pkt->port, pkt->numThreads ? pkt->numThreads : 1);
+   } else if (pkt->webType & WEB_HTTP) {
+      show("[WEB STRESS] Making HTTP Requests to host [%s] on port %d [%d threads]...\n\n",
+      pkt->dst, pkt->port, pkt->numThreads ? pkt->numThreads : 1);
+      func = &__http_stress;
+   } else if (pkt->webType & WEB_ICMP) {
+      show("[WEB STRESS] Sending ICMP packets to host %s [%d threads]...\n", 
+      pkt->dst, pkt->numThreads ? pkt->numThreads : 1);
+      func = &__icmp_stress;
+   } else if (pkt->webType & WEB_SYN) {
+      show("[WEB STRESS] Sending TCP SYN packets to host [%s] on port %d [%d threads]...\n",
+      pkt->dst, pkt->port, pkt->numThreads ? pkt->numThreads : 1);
+      func = &__syn_stress;
+   } else if (pkt->webType & WEB_ACK) {
+      show("[WEB STRESS] Sending TCP ACK-PSH packets to host [%s] on port %d [%d threads]..\n",
+      pkt->dst, pkt->port, pkt->numThreads ? pkt->numThreads : 1);
+      func = &__ack_stress;
+   } else if (pkt->webType & WEB_SLOW) {
+      show("[WEB STRESS] Making HTTP SlowLoris requests to [%s] on port %d [%d threads]...\n",
+      pkt->dst, pkt->port, pkt->numThreads ? pkt->numThreads : 1);
+      func = &__slow_stress;
+   } else func = NULL;
 
    if ( !__threadPool(pkt->numThreads, func, NULL) ) return false;
 
