@@ -57,6 +57,10 @@ tar zfx $RPM_SOURCE_DIR/%{appname}-%{version}.tar.gz -C $RPM_BUILD_ROOT
 %attr (0755,root,root) %{mandir}/nsoq.8.gz
 
 %changelog
+* Thu Nov 20 2014 Felipe Ecker (Khun) <khun@hexcodes.org>
+- Add a time control for slowloris option
+- New version: 1.9.5
+
 * Sun Oct 19 2014 Felipe Ecker (Khun) <khun@hexcodes.org>
 - Released Nsoq version.
 - New release 1.9.4.

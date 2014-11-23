@@ -1,6 +1,16 @@
                          CHANGELOG           
 
 
+Version 1.9.5:
+(11.20.2014)
+..............
+
+- Adjusted Slowloris socket routine
+- More optimizations
+- [BUG] Slowloris shoot doesn't handling a correct socket policy
+
+
+
 Version 1.9.4:
 (10.18.2014)
 ..............

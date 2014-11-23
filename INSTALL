@@ -47,7 +47,6 @@ BUILDING AND INSTALLATION:
     - Enter to the directory Nsoq-x.x.x.
 
     - Run 'make'.
-    - Or run 'make static' for static binaries.
     - Or run 'make debug' for debugging binaries.
 
     - Run 'make install'.

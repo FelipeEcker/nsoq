@@ -114,6 +114,7 @@ nsoq
    -K                  -->  TCP ACK stress test
    -Y                  -->  SLOWLORIS (GET/KEEPALIVE) based attack
    [INFO] Use the -p <port> to set other than port 80 (default is port 80)
+   [INFO] Use the -F <sec> to set a delay for slowloris packet (default 10 sec)
 
    
               <HIVE MIND - Mass Remote Control>
