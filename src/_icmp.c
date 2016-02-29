@@ -99,7 +99,7 @@ static void __doListen( void ) {
    }
 
    if ( !(__session = 
-   pcap_open_live(eth, pkt->buffsize + 512, true, 1, err_buff)) ) {
+   pcap_open_live(eth, pkt->buffsize + 512, true, 100000, err_buff)) ) {
       log("Couldn't open device %s: Detail: %s\n", eth, err_buff);
       kill(getpid(), SIGALRM);
       goto __BREAK;
